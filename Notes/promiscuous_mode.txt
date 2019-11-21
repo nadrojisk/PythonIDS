@@ -18,4 +18,15 @@ https://github.com/KimiNewt/pyshark/issues/152
 	This article seems to imply that phsark will automatically set whatever wireless card/interface your using to promiscuous mode- this could be an importantly
 		piece of information, and solve the problem of setting promiscuous mode.
 		
-		
+Another interesting library (pythonwifi)
+http://pythonwifi.tuxfamily.org/
+	this library could give us access to our wireless cards or nics, lets us changes the modes they're using, the channels they connect to, etc.
+	
+And one for wifi access via python:
+https://wifi.readthedocs.io/en/latest/index.html
+
+Equipment Considerations:
+https://secwiki.org/w/Npcap/WiFi_adapters
+	This page lists several pieces of hardware and their ability to capture wifi
+	
+	
