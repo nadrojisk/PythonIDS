@@ -29,9 +29,10 @@ def choose_interface():
     return interfaces[selection]
 
 
-def sniff(interface=None, timeout=10, out_file=None,):
+def sniff(interface=None, timeout=10, continous=False, out_file=None,):
     """
-    Sniffs packet on specified interface. 
+    Sniffs packet on specified interface, either for a 
+    specified number of seconds or forever.
 
     If interface is not specified local interface will
     be listed. If an outfile is provided the function 
@@ -53,12 +54,20 @@ def sniff(interface=None, timeout=10, out_file=None,):
     """
     if not interface:
         interface = choose_interface()
+
+    # if out_file is provided, output capture
     if out_file:
         capture = pyshark.LiveCapture(output_file=out_file,
                                       interface=interface)
     else:
         capture = pyshark.LiveCapture(interface=interface)
-    capture.sniff(timeout=timeout)
+
+    # if continuous sniff continuously, other sniff for timeout
+    if continous:
+        capture.sniff_continuously()
+    else:
+        capture.sniff(timeout=timeout)
+
     return capture
 
 
