@@ -50,6 +50,11 @@ a MITM attack against .30...
 I've recorded from the .5 machine - the host connecting to the attacker machine, 
 as well as the attacker machine. I had attempted to record the victim machine, however
 as soon at the arp table was poisoned, the ssh session crashed.
+
+I've also included an additional run of ettercap from my home lab that clearly shows
+the process arp is using for arp poisoning
+
+
 	
 
 	
