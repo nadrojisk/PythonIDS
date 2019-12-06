@@ -15,3 +15,9 @@ def test_ack_sig_tp_100():
 
 def test_ack_sig_tn_100():
     assert not nmap_ids.ack_signature_detection('pcaps/normal_data2.pcapng')
+
+def test_ack_sig_tp_100():
+    assert nmap_ids.syn_signature_detection('pcaps/nmap/syn_ubuntu.pcapng')
+
+def test_ack_sig_tn_100():
+    assert not nmap_ids.syn_signature_detection('pcaps/normal_data2.pcapng')
