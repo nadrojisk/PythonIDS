@@ -13,7 +13,7 @@ Date: 11/22/2019
 """
 
 
-def choose_interface():
+def _choose_interface():
     """
     Allows user to select interface based
     on system interfaces
@@ -29,7 +29,7 @@ def choose_interface():
     return interfaces[selection]
 
 
-def sniff(interface=None, timeout=10, continous=False, out_file=None,):
+def _sniff(interface=None, timeout=10, continous=False, out_file=None,):
     """
     Sniffs packet on specified interface, either for a 
     specified number of seconds or forever.
@@ -53,7 +53,7 @@ def sniff(interface=None, timeout=10, continous=False, out_file=None,):
         capture object
     """
     if not interface:
-        interface = choose_interface()
+        interface = _choose_interface()
 
     # if out_file is provided, output capture
     if out_file:
@@ -71,9 +71,8 @@ def sniff(interface=None, timeout=10, continous=False, out_file=None,):
     return capture
 
 
-def read_cap(in_file='/pcaps/mycapture.cap'):
+def _read_cap(in_file='/pcaps/mycapture.cap'):
     """ Reads capture file in and returns capture object """
-
     cap = pyshark.FileCapture(in_file)
     return cap
 
@@ -81,4 +80,18 @@ def read_cap(in_file='/pcaps/mycapture.cap'):
 def dump_cap(capture):
     """ Dumps capture object's packets to standard output """
     for c in capture:
-        print(c)
+        c.pretty_print()
+
+
+def get_capture(file=None, **kwargs):
+    """ 
+    Controller method for sniffer, only 'public method'
+
+    If file is none, assume user wanted to sniff traffic rather
+    than use a file capture
+    """
+    if file:
+        capture = _read_cap(file)
+    else:
+        capture = _sniff(**kwargs)
+    return capture
