@@ -44,7 +44,7 @@ def ack_signature_detection(file=None, **kwargs):
 
                 # if the number of unique dst ports are more then MAX_UNIQUE_PORTS flag it
                 if len(filter[packet.ip.addr]) > MAX_UNIQUE_PORTS:
-                    print(f'ACK  ATTACK in packet number: {packet.number}')
+                    print(f'ACK ATTACK in packet number: {packet.number}')
                     detected = True
 
     return detected
@@ -64,7 +64,7 @@ def syn_signature_detection(file=None, **kwargs):
 
                 # if the number of unique dst ports are more than MAX_UNIQUE_PORTS flag it
                 if len(filter[packet.ip.addr]) > MAX_UNIQUE_PORTS:
-                    print("SYN Attack Detected")
+                    print(f'SYN ATTACK in packet number: {packet.number}')
                     detected = True
 
     return detected
