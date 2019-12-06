@@ -19,21 +19,40 @@ def xmas_signature_detection(file):
 
 def ack_signature_detection(file):
     capture = sniffer.read_cap(file)
-    filter = defaultdict(lambda: defaultdict(int))
+    filter = {}
+    detected = False
     for packet in capture:
         try:
-            if packet.transport_layer == 'TCP' and packet.tcp.flags == 0x10:
-                if packet.ip.addr in filter:
-                    filter[packet.ip.addr].add(packet.tcp.port)
-                    if len(filter[packet.ip.addr]) > 30:
-                        print("ACK Attack Detected")
-                        
-                else:
-                    filter[packet.ip.addr] = set()
+            if packet.transport_layer == 'TCP' :
+                if  int(packet.tcp.flags,16) == 16:
+                    if packet.ip.addr in filter:
+                        filter[packet.ip.addr].add(packet.tcp.dstport)
+                        if len(filter[packet.ip.addr]) > 10:
+                            print("ACK Attack Detected")
+                            detected = True
+                    else:
+                        filter[packet.ip.addr] = set()
         except:
             pass
+    return detected
 
-
-
+def syn_signature_detection(file):
+    capture = sniffer.read_cap(file)
+    filter = {}
+    detected = False
+    for packet in capture:
+        try:
+            if packet.transport_layer == 'TCP' :
+                if  int(packet.tcp.flags,16) == 2:
+                    if packet.ip.addr in filter:
+                        filter[packet.ip.addr].add(packet.tcp.dstport)
+                        if len(filter[packet.ip.addr]) > 10:
+                            print("SYN Attack Detected")
+                            detected = True
+                    else:
+                        filter[packet.ip.addr] = set()
+        except:
+            pass
+    return detected
 
 
