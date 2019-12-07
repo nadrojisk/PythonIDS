@@ -24,7 +24,6 @@ t6 = multiprocessing.Process(
     target=responder_ids.behavioral_detection, kwargs={'interface': 'eth0', 'continuous': True})
 
 
-
 # starting thread 1
 t1.start()
 # starting thread 2
