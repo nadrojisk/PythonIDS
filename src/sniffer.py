@@ -21,13 +21,11 @@ def _choose_interface():
     """
     Allows user to select interface based
     on system interfaces
-
-    TODO: doesnt seem to work on windows
     """
     interfaces = netifaces.interfaces()
 
     if os.name == 'nt':
-        print('hi')
+        # allows windows machines to choose interfaces
         iface_names = ['(unknown)' for i in range(len(interfaces))]
         reg = wr.ConnectRegistry(None, wr.HKEY_LOCAL_MACHINE)
         reg_key = wr.OpenKey(
@@ -36,9 +34,8 @@ def _choose_interface():
             try:
                 reg_subkey = wr.OpenKey(
                     reg_key, interface + r'\Connection')
-                print(reg_subkey)
+
                 iface_names[counter] = wr.QueryValueEx(reg_subkey, 'Name')[0]
-                print(iface_names)
             except FileNotFoundError:
                 pass
         interfaces = iface_names
