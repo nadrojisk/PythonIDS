@@ -1,3 +1,10 @@
+"""
+Ettercap detection module
+
+Author: Charles Harper
+Date: Nov 12, 2019
+"""
+
 import sniffer
 
 # ARP POISONING CHECKS
@@ -7,11 +14,14 @@ import sniffer
 # 2. check if the arp reply contains information about duplicate-addresses
 # if it does, they're most likely running arp poisoning
 # if it isn't, it should be ok
-# 3. assuming they get passed the arp request count check, keep count of the number arp req to arp replys
+# 3. assuming they get passed the arp request count check, keep count of the number arp req to
+# arp replys
+
 # if the replies far exceeds the replies, we know that an arp spoof is taking place
 # otherwise, we should be ok
 
-# depricated function 2 as it's a built-in warning associated with wireshark (i think), and will not work with tshark
+# depricated function 2 as it's a built-in warning associated with wireshark (i think),
+# and will not work with tshark
 
 
 def heuristic_detection(file=None, **kwargs):

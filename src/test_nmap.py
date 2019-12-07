@@ -41,7 +41,7 @@ def test_ack_sig_tp_100():
     # malicious traffic
 
     # recorded on ubuntu system being scanned by kali via `nmap -sA ip`
-    assert ids_nmap.ack_signature_detection('pcaps/nmap/ack_ubuntu.pcapng')
+    assert ids_nmap.ack_heuristic_detection('pcaps/nmap/ack_ubuntu.pcapng')
 
 
 def test_ack_sig_tn_100():
@@ -50,22 +50,22 @@ def test_ack_sig_tn_100():
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not ids_nmap.ack_signature_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.ack_heuristic_detection('pcaps/normal_data2.pcapng')
 
 
-def test_ack_sig_tp_100():
+def test_syn_sig_tp_100():
     # makes sure that running syn detection returns true
     # if fails, that means our detection is not working as this pcap contains
     # malicious traffic
 
     # recorded on ubuntu system being scanned by kali via `nmap -sS ip`
-    assert ids_nmap.syn_signature_detection('pcaps/nmap/syn_ubuntu.pcapng')
+    assert ids_nmap.syn_heuristic_detection('pcaps/nmap/syn_ubuntu.pcapng')
 
 
-def test_ack_sig_tn_100():
+def test_syn_sig_tn_100():
      # makes sure that running syn detection returns false
     # if fails, that means our detection is not working as this pcap contains
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not ids_nmap.syn_signature_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.syn_heuristic_detection('pcaps/normal_data2.pcapng')
