@@ -109,7 +109,7 @@ def dump_cap(capture):
 
 def get_capture(file=None, **kwargs):
     """
-    Controller method for sniffer, only 'public method' for module
+    Controller method for sniffer
 
     If file is none, assume user wanted to sniff traffic rather
     than use a file capture
