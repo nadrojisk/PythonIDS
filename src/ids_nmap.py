@@ -1,4 +1,3 @@
-# x mas
 import sniffer
 import collections
 

@@ -1,4 +1,4 @@
-import nmap_ids
+import ids_nmap
 
 """ 
 Test code for nmap ids
@@ -14,7 +14,7 @@ def test_xmas_sig_tp_100():
     # malicious traffic
 
     # recorded on ubuntu system being scanned by kali via `nmap -sX ip`
-    assert nmap_ids.xmas_signature_detection('pcaps/nmap/xmas_ubuntu.pcapng')
+    assert ids_nmap.xmas_signature_detection('pcaps/nmap/xmas_ubuntu.pcapng')
 
 
 def test_xmas_sig_tp_105():
@@ -23,7 +23,7 @@ def test_xmas_sig_tp_105():
     # malicious traffic
 
     # recorded on windows system being scanned by kali via `nmap -sX ip`
-    assert nmap_ids.xmas_signature_detection('pcaps/nmap/xmas_windows.pcapng')
+    assert ids_nmap.xmas_signature_detection('pcaps/nmap/xmas_windows.pcapng')
 
 
 def test_xmas_sig_tn_100():
@@ -32,7 +32,7 @@ def test_xmas_sig_tn_100():
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not nmap_ids.xmas_signature_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.xmas_signature_detection('pcaps/normal_data2.pcapng')
 
 
 def test_ack_sig_tp_100():
@@ -41,7 +41,7 @@ def test_ack_sig_tp_100():
     # malicious traffic
 
     # recorded on ubuntu system being scanned by kali via `nmap -sA ip`
-    assert nmap_ids.ack_signature_detection('pcaps/nmap/ack_ubuntu.pcapng')
+    assert ids_nmap.ack_signature_detection('pcaps/nmap/ack_ubuntu.pcapng')
 
 
 def test_ack_sig_tn_100():
@@ -50,7 +50,7 @@ def test_ack_sig_tn_100():
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not nmap_ids.ack_signature_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.ack_signature_detection('pcaps/normal_data2.pcapng')
 
 
 def test_ack_sig_tp_100():
@@ -59,7 +59,7 @@ def test_ack_sig_tp_100():
     # malicious traffic
 
     # recorded on ubuntu system being scanned by kali via `nmap -sS ip`
-    assert nmap_ids.syn_signature_detection('pcaps/nmap/syn_ubuntu.pcapng')
+    assert ids_nmap.syn_signature_detection('pcaps/nmap/syn_ubuntu.pcapng')
 
 
 def test_ack_sig_tn_100():
@@ -68,4 +68,4 @@ def test_ack_sig_tn_100():
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not nmap_ids.syn_signature_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.syn_signature_detection('pcaps/normal_data2.pcapng')

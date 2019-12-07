@@ -1,7 +1,8 @@
-import nmap_ids
-import ettercap_ids
 import multiprocessing
-import responder_ids
+import ids_nmap
+import ids_ettercap
+import ids_responder
+
 
 """
 Main IDS Driver
@@ -11,17 +12,17 @@ Date: Dec 6, 2019
 """
 
 t1 = multiprocessing.Process(
-    target=nmap_ids.xmas_signature_detection, kwargs={'interface': 'eth0', 'continuous': True})
+    target=ids_nmap.xmas_signature_detection, kwargs={'interface': 'eth0', 'continuous': True})
 t2 = multiprocessing.Process(
-    target=nmap_ids.ack_signature_detection, kwargs={'interface': 'eth0', 'continuous': True})
+    target=ids_nmap.ack_signature_detection, kwargs={'interface': 'eth0', 'continuous': True})
 t3 = multiprocessing.Process(
-    target=nmap_ids.syn_signature_detection, kwargs={'interface': 'eth0', 'continuous': True})
+    target=ids_nmap.syn_signature_detection, kwargs={'interface': 'eth0', 'continuous': True})
 t4 = multiprocessing.Process(
-    target=ettercap_ids.heuristic_detection, kwargs={'interface': 'eth0', 'continuous': True})
+    target=ids_ettercap.heuristic_detection, kwargs={'interface': 'eth0', 'continuous': True})
 t5 = multiprocessing.Process(
-    target=ettercap_ids.behavioral_detection, kwargs={'interface': 'eth0', 'continuous': True})
+    target=ids_ettercap.behavioral_detection, kwargs={'interface': 'eth0', 'continuous': True})
 t6 = multiprocessing.Process(
-    target=responder_ids.behavioral_detection, kwargs={'interface': 'eth0', 'continuous': True})
+    target=ids_responder.behavioral_detection, kwargs={'interface': 'eth0', 'continuous': True})
 
 
 # starting thread 1

@@ -15,7 +15,7 @@ MAX_UNIQUE_PORTS = 10
 DOMAIN_IP = '192.168.150.201'
 
 
-def responder_signature_detection(file=None, **kwargs):
+def behavioral_detection(file=None, **kwargs):
     capture = sniffer.get_capture(file, **kwargs)
     detected = False
 
@@ -23,12 +23,9 @@ def responder_signature_detection(file=None, **kwargs):
         # ensure packet is either an 'NBNS' or 'LLMNR' as responder attacks run through these protocols
         try:
             if ('nbns' in packet or 'llmnr' in packet) and packet.ip.src != DOMAIN_IP:
-                print(f'Responder ATTACK deteced in packet number: {packet.number}')
+                print(
+                    f'Responder ATTACK deteced in packet number: {packet.number}')
                 detected = True
         except:
-        	pass
+            pass
     return detected
-
-responder_signature_detection('attack.pcapng')
-
-
