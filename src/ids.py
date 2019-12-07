@@ -11,6 +11,8 @@ Author: Jordan Sosnowski, Charles Harper
 Date: Dec 6, 2019
 """
 
+print('Sniffing...')
+
 t1 = multiprocessing.Process(
     target=ids_nmap.xmas_signature_detection, kwargs={'interface': 'eth0', 'continuous': True})
 t2 = multiprocessing.Process(
