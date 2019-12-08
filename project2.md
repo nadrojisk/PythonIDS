@@ -1,9 +1,21 @@
+---
+title: "Python IDS Report"
+author: [Jordan Sosnowski, Charles Harper, Tyler McGlawn, John David Watts]
+date: "2019-12-12"
+subject: "Python IDS"
+keywords: [ids, python, heuristic, detection, nmap, ettercap, responder, eternal blue]
+lang: "en"
+titlepage: "true"
+titlepage-rule-color: "FFFFFF"
+titlepage-background: "./background8.pdf"
+---
+
 # Executive summary
 
 For this project we were tasked with producing a Python based intrusion detection system (IDS).
-Our IDS is a host based IDS, by that we mean it is ran on each host on the network.
-Only the host can see traffic to or from itself.
-The IDS implementation protects against NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap, Responder, CVE-2017-010.
+Our IDS is a host based IDS, by that we mean the scanner is ran on each host on the network.
+Since we are running on a switched network the IDS can only see traffic to or from the host it is running on.
+The IDS implementation protects against NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap, Responder, Metasploit's ms17_010_psexec exploit.
 We also use various types of detection systems to protect against attacks there are 4 covered: behavioral, anomaly, signature, and heuristic.
 
 # Introduction
@@ -20,7 +32,7 @@ However, manually analyzing data streams is feasibly impossible especially for l
 To combat this intrusion detection systems can be used to slim down the amount of data analyst have to sift through.
 
 This framework is a Python implementation for an Intrusion Detection System. 
-It aims to detect NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap ARP Poisoning, Metasploit's ps_exec and Eternal Blue payload, and Responder's Windows DNS spoofing. 
+It aims to detect NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap ARP Poisoning, Metasploit's ms17_010_psexec exploit, and Responder's Windows DNS spoofing. 
 The framework uses different IDS methods to achieve this goal.
 
 ## II. Definition of Terms
@@ -34,10 +46,10 @@ IDS systems can also be configured to stop detected intrusions.
 ### 2. Host Based Intrusion Detection System
 
 A host based IDS is an intrusion detection system that is run on the computers on the network.
-The opposite of a host based IDS is a network based IDS where the IDS is instead run on the network switches / routers.
-The downside for a host based IDS is, for a switched network, an IDS will only be able to see traffic destined to or from the host it is running on.
-Since it a switched network the switch will only forward packets to the intended ports.
-If it was a hub network, or the switch was configured to have a trunk then a host based IDS would be able to see all the traffic on the network.
+The opposite of a host based IDS is a *network based IDS* where the IDS is instead run on the network switches / routers.
+The downside for a host based IDS is while running on a switched network an IDS will only be able to see traffic destined to or from the host it is running on.
+This is due to the fact that on switched networks the switch will only forward packets to the intended ports.
+If it was a hub network, a Wi-Fi network, or the switch was configured to have a trunk port then a host based IDS would be able to see all the traffic on the network.
 
 ### 3. Behavior IDS
 
@@ -74,13 +86,25 @@ NMAP provides a huge number of features for scanning and probing networks.
 
 ### 8. Ettercap
 
+A 'multipurpose sniffer/content filter' for man in the middle attacks.
+It was originally created as a sniffer for switched LANs, but evolved into a tool meant for man-in-the middle-attacks. 
+
 ### 9. Responder
 
-Responder is a tool that allows us to use LLMNR, NBT-NS, and MDNS poisoning. What this means is that we can use an LLMNR and NBT-NS Spoofing attack against a network. This sort of attack takes advantage of default Windows configurations in order to achieve its end goal. 
+A tool that allows us to use LLMNR, NBT-NS, and MDNS poisoning. What this means is that we can use an LLMNR and NBT-NS Spoofing attack against a network. This sort of attack takes advantage of default Windows configurations in order to achieve its end goal. 
 
-### 10. LLMNR and NBT-NS
+### 10. Link-Local Multicast Name Resolution (LLMNR) 
 
-It is important to understand what a LLMNR and NBT-NS server broadcast is in order to understand how this kind of attack works. When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. This poses a huge threat as if the DNS name is not resolved, then the client (aka the victim in this scenario) performs and unauthenticated UDP broadcast to the network asking all other systems if it has the name that it is looking for. We can see now why this is a problem as this entire process is unauthenticated and broadcasted to the entire network. This allows any machine on the network to respond and claim to be the target machine.
+A protocol based on the Domain Name System packet format that allows hosts to perform name resolution for hosts on the same local link.
+
+### 11. NetBIOS-NS (NBT-NS)
+
+Name Service provided by NetBIOS that provides name registration and resolution. 
+Identifies the systems on a local network by their NetBIOS name.
+
+### 12. NetBIOS
+
+Provides services related to the session layer of the OSI model allowing applications on separate computers to communicate over a local area network.
 
 ### 11. Metasploit
 
@@ -90,15 +114,41 @@ It is important to understand what a LLMNR and NBT-NS server broadcast is in ord
 
 ## I Attack Explanations
 
-### 1. NMAP ACK
+### 1. NMAP ACK Scan <sup>[2]</sup>
 
-### 2. NMAP SYN
+This scan are different than the other two scans discussed in this report.
+Its main purpose is to map out if a firewall is active and filtering certain ports or not.
+If a system is *unfiltered*, not running a firewall, *open* and *closed* ports will return a **RST** packet.
+However, if a system is *filtered*, running a firewall, ports will not respond at all.
+This type of scan *will not* detect if ports are open or closed.
 
-### 3. NMAP XMAS
+### 2. NMAP SYN Scan <sup>[2]</sup>
 
-### 4. Ettercap
+This scan is the default scan for NMAP scanning. 
+This scan is rather fast and stealthy due to the fact that if never completes a full TCP handshake.
+NMAP will send a *SYN* packet and an *open* port will respond with a **SYN/ACK** while a *closed* port will send a **RST**. 
+If no response is returned it is assumed the port is *filtered*. 
+
+
+### 3. NMAP XMAS Scan <sup>[2]</sup>
+
+This scan exploits a behavior built into RFC 793 to differentiate between open and closed ports.
+"If the [desintation] port state is *CLOSED* ... an incoming segment nont containing a *RST* causes a *RST* to be sent in response" and. Therefore no response will mean that the port is either *open* or *filtered*. 
+The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags. 
+
+### 4. Ettercap <sup>[2]</sup>
+
+The first thing Ettercap does is it scans the network for active hosts. 
+Below you can notice several ARP requests in a row all coming from the same host- this is the host discovery step. 
+![Host Discovery](/img/ettercap/HostDiscoveryPackets.PNG)
+
+Following that, the attacker selects a victim. Following this selection, the attacker machine sent out gratuitous arp claiming that they are the machine associated with an ip address that they are sitting on. 
+This ip address they are claiming to be actually belongs to the victim machine. This message, the gratuitous ARP, is broadcasted on the network, so all the machines listening and learning the network hear it and assume it's true.
+They log this information in their ARP tables, and now when traffic is routed to that IP, it is routed to the attacker machine instead of the victim host.
 
 ### 5. Responder
+
+It is important to understand what a LLMNR and NBT-NS server broadcast is in order to understand how this kind of attack works. When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. This poses a huge threat as if the DNS name is not resolved, then the client (aka the victim in this scenario) performs and unauthenticated UDP broadcast to the network asking all other systems if it has the name that it is looking for. We can see now why this is a problem as this entire process is unauthenticated and broadcasted to the entire network. This allows any machine on the network to respond and claim to be the target machine.
 
 Responder is a tool that allows us to use LLMNR, NBT-NS, and MDNS poisoning. 
 What this means is that we can use an LLMNR and NBT-NS Spoofing attack against a network. 
@@ -313,7 +363,11 @@ def syn_heuristic_detection(file=None, **kwargs):
 ### 3. IDS Ettercap
 
 Another type of attack we aim to detect against is Ettercap's ARP poisioning. 
-`heuristic_detection` takes in the same parameters as seen before and passes it to `sniffer`.
+`heuristic_detection` takes in the same parameters as seen before and passes it to `sniffer`. `heuristic_detection` checks for suspicious activity in the network traffic by looking for the host discovery process used by ettercap when setting up 
+	an arp poisoning attack. The way we have implemented this scan is
+	by counting the number of consecutive ARP requests made by a specific host. 
+	If the number of consecutive arp requests made by the same host exceeds a set threshold value,
+	the ids alerts the host machine, and returns a warning.
 
 ```python
 def heuristic_detection(file=None, **kwargs):
@@ -339,6 +393,13 @@ def heuristic_detection(file=None, **kwargs):
                     was_detected = True
     return was_detected
 ```
+
+`behavioral_detection` checks for suspicious activity in the network traffic by checking for gratuitous ARP replies.
+The way we have implemented this scan is by counting the number of ARP replies and ARP requests. 
+With normal traffic, more ARP requests are made than ARP replies. With the counted number of request and replies, we examine the ratio between the two. 
+If e number of request far exceeds the number of replies, we know that a host is making gratuitous ARP packet. 
+We flag the packets deemed as gratuitous ARPs and alert the host machine.
+
 ```python
 def behavioral_detection(file=None, **kwargs):
     capture = sniffer.get_capture(file, **kwargs)
@@ -372,6 +433,34 @@ def behavioral_detection(file=None, **kwargs):
 
 ```
 
+
+### 4. IDS Responder 
+
+Responder's spoofing is one of the last attacks we are trying to protect against.
+Responder uses LLMNR, NBT-NS, and MDNS poisioning attacks. Essestially, we can use these kind of spoofing attacks agaisnt a network when a victim sends a bad DNS requests to a server. Once this bad request has been sent, we act as a 'Man-in-the-Middle' and our Kali machine acts as the machine that the victim wants to connect to. Once this connection has been made, we get the SMB.txt file from the client and we can therefore crack this hash offline to get valuable information about the victim machine.   
+In our code we assume that one machine in the network has been setup to be the domain controller.
+Therefore if traffic is seen from an IP that is not the domain controller on specific protocols, NBNS and LLMNR, that only the domain controller should be sending on we assume responder is trying to spoof the network. 
+The hardcoded *DOMAIN_IP* will need to be changed per network as it will not always be the same.
+
+```python
+DOMAIN_IP = '192.168.150.201'  
+
+
+def behavioral_detection(file=None, **kwargs):
+
+    capture = sniffer.get_capture(file, **kwargs)
+    detected = False
+
+    for packet in capture:
+        try:
+            if ('nbns' in packet or 'llmnr' in packet) and packet.ip.src != DOMAIN_IP:
+                print(
+                    f'Responder ATTACK deteced in packet number: {packet.number}')
+                detected = True
+        except AttributeError:
+            pass
+    return detected
+```
 
 ## III. Screenshots
 
@@ -544,7 +633,7 @@ def xmas_signature_detection(file=None, **kwargs):
     for packet in capture:
         # ensure packet is TCP as xmas attacks run over TCP
         if packet.transport_layer == 'TCP':
-            # ensure that the only flags set are the push, reset, and final flags
+            # ensure that the only flags set are the push, urgent, and final flags
             # usually those flags should not be set, and if they are its probably
             # an xmas attack
             if int(packet.tcp.flags, 16) == 41:  # '0x00000029'
@@ -746,3 +835,5 @@ def behavioral_detection(file=None, **kwargs):
 [6]: https://forums.kali.org/showthread.php?36036-Penetration-Testing-How-to-use-Responder-py-to-Steal-Credentials
 [7]: https://www.4armed.com/blog/llmnr-nbtns-poisoning-using-responder/
 [8]: https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/
+[9]: https://linux.die.net/man/8/ettercap
+[10]: https://linux.die.net/man/1/nmap
