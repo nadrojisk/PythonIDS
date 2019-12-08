@@ -1,0 +1,41 @@
+ettercap description:
+	
+	Ettercap is a 'multipurpose sniffer/content filter' for man in the middle attacks.
+	It was originally created as a sniffer for switched LANs, but evolved into
+	a tool meant for man-in-the middle-attacks. 
+	
+	
+blurb for each method of scanner:
+
+	'heuristic_detection' checks for suspicious activity in the network traffic by
+	looking for the host discovery process used by ettercap when setting up 
+	an arp poisoning attack. The way we have implemented this scan is
+	by counting the number of consecutive ARP requests made by a specific host. 
+	If the number of consecutive arp requests made by the same host exceeds a set threshold value,
+	the ids alerts the host machine, and returns a warning.
+	
+	'behavioral_detection' checks for suspicious activity in the network traffic by
+	 checking for gratuitous ARP replies. The way we have implemented this
+	scan is by counting the number of ARP replies and ARP requests. With normal
+	traffic, more ARP requests are made than ARP replies. With the counted number of
+	request and replies, we examine the ratio between the two. If e number of 
+	request far exceeds the number of replies, we know that a host is making
+	gratuitous ARP packet. We flag the packets deemed as gratuitous ARPs and
+	alert the host machine.
+	
+	
+screenshots
+
+description of attack:
+	The first thing Ettercap does is it scans the network for active hosts. 
+	In screenshot [1], you notice several ARP requests in a row all coming from
+	the same host- this is the host discovery step. Following that, the attacker
+	selects a victim. Following this selection, the attacker machine sent out 
+	gratuitous arp claiming that they are the machine associated with an ip address
+	that they are sitting on. This ip address they are claiming to be actually belongs
+	to the victim machine. This message, the gratuitous ARP, is broadcasted on the 
+	network, so all the machines listening and learning the network hear it and assume
+	it's true. They log this information in their ARP tables, and now when traffic is
+	routed to that IP, it is routed to the attacker machine instead of the victim host.
+	
+
