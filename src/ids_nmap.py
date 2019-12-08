@@ -25,7 +25,7 @@ def xmas_signature_detection(file=None, **kwargs):
     for packet in capture:
         # ensure packet is TCP as xmas attacks run over TCP
         if packet.transport_layer == 'TCP':
-            # ensure that the only flags set are the push, reset, and final flags
+            # ensure that the only flags set are the push, urgent, and final flags
             # usually those flags should not be set, and if they are its probably
             # an xmas attack
             if int(packet.tcp.flags, 16) == 41:  # '0x00000029'
