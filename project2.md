@@ -24,10 +24,10 @@ We also use various types of detection systems to protect against attacks there 
 
 Modern networks are constantly under attack from malicious agents whether it be malicious insiders, advanced persistent threats, nation state actors, hacktivist, you name it.
 Data breaches can cost businesses hundreds of millions of dollars.
-Therefore, it is extremly important to have good network security.
-Breaches can have more than just economic repurcussions. 
+Therefore, it is extremely important to have good network security.
+Breaches can have more than just economic repercussions.
 Employees data can be leaked and their integrity can be compromised and overall trust in the leaked company will go down as well.
-To combat against these attacks it is imperitive to have a network to be up to date as possible but it is also important to analyze network traffic for attacks. 
+To combat against these attacks it is imperative to have a network to be up to date as possible but it is also important to analyze network traffic for attacks. 
 However, manually analyzing data streams is feasibly impossible especially for large networks.
 To combat this intrusion detection systems can be used to slim down the amount of data analyst have to sift through.
 
@@ -71,7 +71,6 @@ Searches network traffic for **specific patterns**.
 Malicious traffic usually has telltale signs, and if these *signs* are seen in packets they should be flagged as malicious.
 If for instance it is known that a recent strain of a popular malware communicate with a server **www.bad_malware.com** on port **8080** then any packets destined to this address and port should be flagged.
 
-### 6. Heuristic IDS
 
 Uses algorithms or *simple rules* to determine compromise.
 Can combine signature, anomaly, and behavior tactics.
@@ -133,7 +132,7 @@ If no response is returned it is assumed the port is *filtered*.
 ### 3. NMAP XMAS Scan <sup>[2]</sup>
 
 This scan exploits a behavior built into RFC 793 to differentiate between open and closed ports.
-"If the [desintation] port state is *CLOSED* ... an incoming segment nont containing a *RST* causes a *RST* to be sent in response" and. Therefore no response will mean that the port is either *open* or *filtered*. 
+"If the [destination] port state is *CLOSED* ... an incoming segment not containing a *RST* causes a *RST* to be sent in response" and. Therefore no response will mean that the port is either *open* or *filtered*. 
 The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags. 
 
 ### 4. Ettercap <sup>[2]</sup>
@@ -228,8 +227,8 @@ def _read_cap(in_file):
 It takes in four arguments: *interface*, *timeout*, *continuous*, and *out_file*.
 *interface* is a string that relates to the interface on the machine that you want to sniff on. 
 If an interface is not provided then `_choose_interface` will be called.
-*timeout* is an integer that represents how many packeets you would like to capture.
-*continous* is a boolean, that if True allows you to capture continuously instead of just a number of packets.
+*timeout* is an integer that represents how many packets you would like to capture.
+*continuous* is a boolean, that if True allows you to capture continuously instead of just a number of packets.
 *out_file* is a string, that if provided, will allow the user to output their capture to a pcap.
 
 ```python
@@ -362,7 +361,7 @@ def syn_heuristic_detection(file=None, **kwargs):
 
 ### 3. IDS Ettercap
 
-Another type of attack we aim to detect against is Ettercap's ARP poisioning. 
+Another type of attack we aim to detect against is Ettercap's ARP poisoning. 
 `heuristic_detection` takes in the same parameters as seen before and passes it to `sniffer`. `heuristic_detection` checks for suspicious activity in the network traffic by looking for the host discovery process used by ettercap when setting up 
 	an arp poisoning attack. The way we have implemented this scan is
 	by counting the number of consecutive ARP requests made by a specific host. 
@@ -437,10 +436,10 @@ def behavioral_detection(file=None, **kwargs):
 ### 4. IDS Responder 
 
 Responder's spoofing is one of the last attacks we are trying to protect against.
-Responder uses LLMNR, NBT-NS, and MDNS poisioning attacks. Essestially, we can use these kind of spoofing attacks agaisnt a network when a victim sends a bad DNS requests to a server. Once this bad request has been sent, we act as a 'Man-in-the-Middle' and our Kali machine acts as the machine that the victim wants to connect to. Once this connection has been made, we get the SMB.txt file from the client and we can therefore crack this hash offline to get valuable information about the victim machine.   
+Responder uses LLMNR, NBT-NS, and MDNS poisoning attacks. Essentially, we can use these kind of spoofing attacks against a network when a victim sends a bad DNS requests to a server. Once this bad request has been sent, we act as a 'Man-in-the-Middle' and our Kali machine acts as the machine that the victim wants to connect to. Once this connection has been made, we get the SMB.txt file from the client and we can therefore crack this hash offline to get valuable information about the victim machine.   
 In our code we assume that one machine in the network has been setup to be the domain controller.
 Therefore if traffic is seen from an IP that is not the domain controller on specific protocols, NBNS and LLMNR, that only the domain controller should be sending on we assume responder is trying to spoof the network. 
-The hardcoded *DOMAIN_IP* will need to be changed per network as it will not always be the same.
+The hard coded *DOMAIN_IP* will need to be changed per network as it will not always be the same.
 
 ```python
 DOMAIN_IP = '192.168.150.201'  
@@ -455,12 +454,12 @@ def behavioral_detection(file=None, **kwargs):
         try:
             if ('nbns' in packet or 'llmnr' in packet) and packet.ip.src != DOMAIN_IP:
                 print(
-                    f'Responder ATTACK deteced in packet number: {packet.number}')
+                    f'Responder ATTACK detected in packet number: {packet.number}')
                 detected = True
         except AttributeError:
             pass
     return detected
-```
+`` `
 
 ## III. Screenshots
 
@@ -646,7 +645,7 @@ def ack_heuristic_detection(file=None, **kwargs):
     """
     ack detection function
 
-    uses the heursitic of uniq ports > MAX_UNIQUE_PORTS and if
+    uses the heuristic of uniq ports > MAX_UNIQUE_PORTS and if
     TCP flag == 0x10
     """
     capture = sniffer.get_capture(file, **kwargs)
@@ -672,7 +671,7 @@ def syn_heuristic_detection(file=None, **kwargs):
     """
     syn detection function
 
-    uses the heursitic of uniq ports > MAX_UNIQUE_PORTS and if
+    uses the heuristic of uniq ports > MAX_UNIQUE_PORTS and if
     TCP flag == 0x2
     """
     capture = sniffer.get_capture(file, **kwargs)
@@ -714,12 +713,12 @@ import sniffer
 # if it does, they're most likely running arp poisoning
 # if it isn't, it should be ok
 # 3. assuming they get passed the arp request count check, keep count of the number arp req to
-# arp replys
+# arp replies
 
 # if the replies far exceeds the replies, we know that an arp spoof is taking place
 # otherwise, we should be ok
 
-# depricated function 2 as it's a built-in warning associated with wireshark (i think),
+# deprecated function 2 as it's a built-in warning associated with wireshark (i think),
 # and will not work with tshark
 
 
@@ -786,7 +785,7 @@ def behavioral_detection(file=None, **kwargs):
 An IDS system for detecting responder attacks
 
 Author: John David Watts
-Date: Decemeber 12 2019
+Date: December 12 2019
 """
 
 import sniffer
@@ -811,7 +810,7 @@ def behavioral_detection(file=None, **kwargs):
         try:
             if ('nbns' in packet or 'llmnr' in packet) and packet.ip.src != DOMAIN_IP:
                 print(
-                    f'Responder ATTACK deteced in packet number: {packet.number}')
+                    f'Responder ATTACK detected in packet number: {packet.number}')
                 detected = True
         except AttributeError:
             # some LLMNR packets are transmitted via link layer and not the internet layer
