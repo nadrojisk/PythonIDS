@@ -3,7 +3,7 @@ title: "Python IDS Report"
 author: [Jordan Sosnowski, Charles Harper, Tyler McGlawn, John David Watts]
 date: "2019-12-12"
 subject: "Python IDS"
-keywords: [ids, python, heuristic, detection, nmap, ettercap, responder, eternal blue]
+keywords: [ids, python, heuristic, detection, nmap, ettercap, responder, ms17_010_psexec]
 lang: "en"
 titlepage: "true"
 titlepage-rule-color: "FFFFFF"
@@ -112,7 +112,10 @@ A Ruby-based open source penetration testing framework, that allows for a system
 It is operated via a command line interface or graphical user interface, that allows the user to choose the target, exploit, and payload to use against the target system.
 This framework gives user the ability to choose from one of the many pre-configured exploits/payloads, or use a custom exploit/payload.
 
-### 12. CVE-2017-014 / MS17-010 (Eternal Blue)
+### 12. MS17-010 / CVE-2017-014X 
+
+The MS-010 security update corrects the multiple SMB vulnerabilities discovered in Microsoft Windows that could allow for remote access to a system.
+Each exact vulnerability is detailed in CVE-2017-0143, CVE-2017-0144, CVE-2017-0145, CVE-2017-0146, CVE-2017-0147, and CVE-2017-0148.
 
 # Methods
 
