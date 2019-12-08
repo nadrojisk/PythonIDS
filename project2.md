@@ -108,6 +108,10 @@ Provides services related to the session layer of the OSI model allowing applica
 
 ### 11. Metasploit
 
+A Ruby-based open source penetration testing framework, that allows for a systematic vulnerability probe into a network.
+It is operated via a command line interface or graphical user interface, that allows the user to choose the target, exploit, and payload to use against the target system.
+This framework gives user the ability to choose from one of the many pre-configured exploits/payloads, or use a custom exploit/payload.
+
 ### 12. CVE-2017-014 / MS17-010 (Eternal Blue)
 
 # Methods
