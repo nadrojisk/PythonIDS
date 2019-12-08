@@ -1,26 +1,26 @@
 # Executive summary
 
 For this project we were tasked with producing a Python based intrusion detection system (IDS).
-Our IDS is a host based IDS, by that we mean it is ran on each host on the network.
+Our IDS is a host based IDS, by that we mean it is run on each host on the network.
 Only the host can see traffic to or from itself.
-The IDS implementation protects against NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap, Responder, CVE-2017-010.
-We also use various types of detection systems to protect against attacks there are 4 covered: behavioral, anomaly, signature, and heuristic.
+The IDS implementation protects against NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap, Responder, and the ms17_010_psexec exploit for CVE 2017 0143/0146/0147.
+We also use various types of detection systems to protect against attacks. There are 4 covered: behavioral, anomaly, signature, and heuristic.
 
 # Introduction
 
 ## I. Problem Description
 
-Modern networks are constantly under attack from malicious agents whether it be malicious insiders, advanced persistent threats, nation state actors, hacktivist, you name it.
+Modern networks are constantly under attack from malicious agents. Whether it be malicious insiders, advanced persistent threats, nation state actors, hacktivist, or others.
 Data breaches can cost businesses hundreds of millions of dollars.
-Therefore, it is extremly important to have good network security.
-Breaches can have more than just economic repurcussions. 
-Employees data can be leaked and their integrity can be compromised and overall trust in the leaked company will go down as well.
-To combat against these attacks it is imperitive to have a network to be up to date as possible but it is also important to analyze network traffic for attacks. 
-However, manually analyzing data streams is feasibly impossible especially for large networks.
-To combat this intrusion detection systems can be used to slim down the amount of data analyst have to sift through.
+Therefore, it is extremely important to have good network security.
+Breaches can have more than just economic repercussions. 
+Employees data can be leaked and their integrity can be compromised, which can lead to the overall trust in the leaked company going down.
+To combat against these attacks it is imperative to have a network up to date as quickly as possible, but it is also important to analyze network traffic for attacks. 
+However, manually analyzing data streams is feasibly impossible -especially for large networks.
+To combat this, intrusion detection systems can be used to slim down the amount of data analyst have to sift through.
 
 This framework is a Python implementation for an Intrusion Detection System. 
-It aims to detect NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap ARP Poisoning, Metasploit's ps_exec and Eternal Blue payload, and Responder's Windows DNS spoofing. 
+It aims to detect NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap ARP Poisoning, Metasploit's ms17_010_psexec exploit, and Responder's Windows DNS spoofing. 
 The framework uses different IDS methods to achieve this goal.
 
 ## II. Definition of Terms
@@ -35,37 +35,37 @@ IDS systems can also be configured to stop detected intrusions.
 
 A host based IDS is an intrusion detection system that is run on the computers on the network.
 The opposite of a host based IDS is a network based IDS where the IDS is instead run on the network switches / routers.
-The downside for a host based IDS is, for a switched network, an IDS will only be able to see traffic destined to or from the host it is running on.
-Since it a switched network the switch will only forward packets to the intended ports.
-If it was a hub network, or the switch was configured to have a trunk then a host based IDS would be able to see all the traffic on the network.
+The downside for a host based IDS on a switched network, is that the IDS will only be able to see traffic destined to or from the host it is running on.
+Since in a switched network the switch will only forward packets to the intended ports.
+If it were a hub network, or the switch was configured to have a trunk, then a host based IDS would be able to see all the traffic on the network.
 
-### 3. Behavior IDS
+### 3. Behavioral IDS
 
 Analyzes traffic using a *known baseline*.
 If the traffic is not close to this baseline the traffic will be flagged.
-An example would be if a network is known to only have FTP traffic but for some reason there is now packets using SSH and SFTP traffic it should be flagged.
-Of course in this example a user could have spun up a box that uses SSH or SFTP but since the baseline is used to seeing only FTP it is abnormal traffic.
+For example- if a network is known to only have FTP traffic, but for some reason there are now packets using SSH and SFTP traffic, then the packets should be flagged.
+Of course in this example a user could have activated a box that uses SSH or SFTP, but since the baseline is accustomed to seeing only FTP, then it is abnormal traffic.
 
 ### 4. Anomaly IDS
 
 Attempts to find abnormal *protocol* activity.
 Protocols adhere to strict guidelines, most are defined in RFCs.
-If for instance, there is traffic on a network that shows a protocol not adhering to its normal activity it should be flagged.
-This is different from a behavior IDS because it is focused on *protocol* activity while behavior is focused on looking at what is *normal* for a network.
+If for instance, there is traffic on a network that shows a protocol not adhering to its normal activity -it should be flagged.
+This is different from a behavioral IDS due to it being focused on *protocol* activity; behavioral is focused on looking at what is *normal* for a network.
 
 ### 5. Signature IDS
 
 Searches network traffic for **specific patterns**.
 Malicious traffic usually has telltale signs, and if these *signs* are seen in packets they should be flagged as malicious.
-If for instance it is known that a recent strain of a popular malware communicate with a server **www.bad_malware.com** on port **8080** then any packets destined to this address and port should be flagged.
+If it is known, for instance, that a recent strain of a popular malware communicates with server **www.bad_malware.com** on port **8080** -then any packets destined for this address and port should be flagged.
 
 ### 6. Heuristic IDS
 
 Uses algorithms or *simple rules* to determine compromise.
-Can combine signature, anomaly, and behavior tactics.
-For example it would be odd for a single IP to scan multiple different ports with a payload of zero data.
-A simple rule could check and see if a unique IP has more than 20 unique destination ports plus using the signature of length zero data packets.
-If this rule is triggered one can assume it is malicious.
+Can combine signature, anomaly, and behavioral tactics.
+For example, it would be odd for a single IP to scan multiple different ports with a payload containing zero data.
+A simple rule could check to see if a unique IP has more than 20 unique destination ports, while additionally using the signature of zero-length data packets.
+If this rule is triggered, one can assume it is malicious.
 
 ### 7. NMAP
 
@@ -76,11 +76,11 @@ NMAP provides a huge number of features for scanning and probing networks.
 
 ### 9. Responder
 
-Responder is a tool that allows us to use LLMNR, NBT-NS, and MDNS poisoning. What this means is that we can use an LLMNR and NBT-NS Spoofing attack against a network. This sort of attack takes advantage of default Windows configurations in order to achieve its end goal. 
+Responder is a tool that allows the use of LLMNR, NBT-NS, and MDNS poisoning. This means that we can use an LLMNR and NBT-NS Spoofing attack against a network. This sort of attack takes advantage of default Windows configurations in order to achieve its end goal. 
 
 ### 10. LLMNR and NBT-NS
 
-It is important to understand what a LLMNR and NBT-NS server broadcast is in order to understand how this kind of attack works. When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. This poses a huge threat as if the DNS name is not resolved, then the client (aka the victim in this scenario) performs and unauthenticated UDP broadcast to the network asking all other systems if it has the name that it is looking for. We can see now why this is a problem as this entire process is unauthenticated and broadcasted to the entire network. This allows any machine on the network to respond and claim to be the target machine.
+It is important to understand what an LLMNR and an NBT-NS server broadcast is in order to understand how this kind of attack works. When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. This poses a huge threat if the DNS name is not resolved. The client (aka the victim in this scenario) could then perform an unauthenticated UDP broadcast to the network asking all other systems if it has the desired name that it is looking for. We can see now why this is a problem as this entire process is unauthenticated and broadcast to the entire network. This allows any machine on the network to respond, claiming to be the target machine.
 
 ### 11. Metasploit
 
