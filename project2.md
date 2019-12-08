@@ -35,7 +35,7 @@ This framework is a Python implementation for an Intrusion Detection System.
 It aims to detect NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap ARP Poisoning, Metasploit's ms17_010_psexec exploit, and Responder's Windows DNS spoofing. 
 The framework uses different IDS methods to achieve this goal.
 
-## II. Definition of Terms
+## II. Background
 
 ### 1. Intrusion Detection System
 
@@ -116,7 +116,7 @@ This framework gives user the ability to choose from one of the many pre-configu
 
 # Methods
 
-## I Attack Explanations
+## I. Attack Explanations
 
 ### 1. NMAP ACK Scan <sup>[2]</sup>
 
@@ -144,7 +144,7 @@ The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags.
 
 The first thing Ettercap does is it scans the network for active hosts. 
 Below you can notice several ARP requests in a row all coming from the same host- this is the host discovery step. 
-![Host Discovery](/img/ettercap/HostDiscoveryPackets.PNG)
+![Host Discovery](img/ettercap/HostDiscoveryPackets.PNG)
 
 Following that, the attacker selects a victim. Following this selection, the attacker machine sent out gratuitous arp claiming that they are the machine associated with an ip address that they are sitting on. 
 This ip address they are claiming to be actually belongs to the victim machine. This message, the gratuitous ARP, is broadcasted on the network, so all the machines listening and learning the network hear it and assume it's true.
@@ -152,10 +152,14 @@ They log this information in their ARP tables, and now when traffic is routed to
 
 ### 5. Responder
 
-It is important to understand what a LLMNR and NBT-NS server broadcast is in order to understand how this kind of attack works. When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. This poses a huge threat as if the DNS name is not resolved, then the client (aka the victim in this scenario) performs and unauthenticated UDP broadcast to the network asking all other systems if it has the name that it is looking for. We can see now why this is a problem as this entire process is unauthenticated and broadcasted to the entire network. This allows any machine on the network to respond and claim to be the target machine.
+Responder out of all the other attacks is by far the most complicated and the one of the ones with the most background knowledge. 
+The other being the metasploit exploit.
+It is important to understand what a LLMNR and NBT-NS server broadcast is in order to understand how this kind of attack works. When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. 
+This poses a huge threat as if the DNS name is not resolved, then the client (aka the victim in this scenario) performs and unauthenticated UDP broadcast to the network asking all other systems if it has the name that it is looking for.
+We can see now why this is a problem as this entire process is unauthenticated and broadcasted to the entire network. 
+This allows any machine on the network to respond and claim to be the target machine.
 
-Responder is a tool that allows us to use LLMNR, NBT-NS, and MDNS poisoning. 
-What this means is that we can use an LLMNR and NBT-NS Spoofing attack against a network. 
+Responder can use an LLMNR and NBT-NS spoofing to poision a network. 
 This sort of attack takes advantage of default Windows configurations in order to achieve its end goal. 
 It is important to understand what a LLMNR and NBT-NS server broadcast is in order to understand how this kind of attack works. 
 When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. 
@@ -171,37 +175,130 @@ If we can capture this hash, it can be cracked offline of the network with a few
 A figure of this entire process is shown below to aid your understanding of what kind of attack we are going to perform with the responder tool. 
 ![Basic attack where a user mistypes the server name]()
 
+
+### 6. CVE
+
+## II. Attack Walkthrough
+
+### 1. NMAP ACK Scan
+
+The NMAP Scans are by far the most trivial to setup. 
+
+* First install NMAP
+    * Debian Based Systems
+        * sudo apt install nmap -y
+    * Mac
+        * brew install nmap
+    * Windows
+        * choco install nmap
+* Figure out the IP or IP ranges you wish to scan
+* Ensure you are on the network about to be scanned, or can access it
+* Run `nmap -sA [ip]`
+    * `nmap -sA 192.168.5.10`
+    * `nmap -sA 192.168.5.0/24`
+
+![ACK Scan](img/nmap/nmap_ack.png)
+
+### 2. NMAP SYN Scan
+
+For SYN Scan's the first three steps are the same, ensure NMAP is intalled, and figure out the IP/IP ranges.
+
+* Run `nmap -sS [ip]`
+    * `nmap -sS 192.168.5.10`
+    * `nmap -sS 192.168.5.0/24`
+
+*Note: SYN Scans are the default scan in nmap so techincally you could just run `nmap ip`*
+
+![SYN Scan](img/nmap/nmap_syn.png)
+
+### 3. NMAP XMAS Scan
+
+For XMAS Scan's the first two steps are the same, ensure NMAP is intalled, and figure out the IP/IP ranges.
+
+* Run `nmap -sX [ip]`
+    * `nmap -sX 192.168.5.10`
+    * `nmap -sX 192.168.5.0/24`
+
+![XMAS Scan](img/nmap/nmap_xmas.png)
+
+### 4. Ettercap
+
+* First installed ettercap
+    * Debian Based: 
+        * sudo apt install ettercap -y
+    * Mac
+        * brew install ettercap 
+    * Windows
+        * choco install ettercap
+
+* Connect to the network that you will be targeting
+
+*  Open ettercap on the attacking machine
+	* `ettercap -G`
+
+![Ettercap GUI](img/ettercap/ettercap_gui.PNG)
+
+* Select the interface that will be used during the attack
+	* To find this we run ifconfig on our attacker machine, and find the
+	interface associated with the network we are sitting on:
+	
+	* In our case, we find that the interface is listed as 'eth0'
+
+	* Select this from the 'unified sniffing' option under the
+	the 'Sniff' tab
+
+![Sniff Tab](img/ettercap/SniffingTab.PNG)
+
+![Interface Selection](img/ettercap/UnifiedSniffingInterfaceSelection.PNG)
+
+* Identify hosts
+	Now for the exciting part, host discovery. ettercap has a host discovery
+	function where is sents arp requests for the range of ip on the subnet.
+	With those we find 9 different hosts:
+
+![Host Discovery](img/ettercap/HostDiscoveryDropdown.PNG)
+
+![Host Discovery](img/ettercap/discovered_hosts.PNG)
+
+* Select Hosts to target with ARP spoofing
+	* next, from the host list, we add the target ip address to 'target 1' and then go to the target list under the target tab
+	* From there we highlught the target, navigate the the 'MITM' tab, select ARP Poisoning, and then select the first option, 'sniff remote connections' and let the program do what it does best.
+
+![Target Selection](img/ettercap/TargetSelection.PNG)
+
+![MITM Selection](img/ettercap/MITMSelection.PNG)
+
+![ARP Poisoning Options](img/ettercap/ARPPoisoningParameterSelection.PNG)
+
+### 5. Responder
+
 We will now show a basic attack with the Responder tool using the Kali Machine (.10) against the Windows Machine (.201). 
 For this demonstration, we assume that you have the version that is already installed on the Kali Machine(.10).
 
 The first step in our process is to go ahead and get Responder running on our attack machine. 
-We can do this by running the command: responder -I eth0 -wrFb
-A screenshot of this first step working properly is shown below.
-![]()
+We can do this by running the command: `responder -I eth0 -wrFb`
+
+![Setup Responder](img/responder/responder.png)
 
 Once we have Responder up and running on our attack machine, we can navigate over to our Windows 7 victim machine (.201) and open up the File Explorer. 
 Once here we can click on the top toolbar and enter in ‘\\abc’ to simulate a user tying the wrong SMB server name. 
+
+![Improper DNS](img/responder/improper_dns.png)
+
 Once the user types in the wrong server name, the DNS lookup fails and therefore our attack begins. 
 One we have pressed the ‘Enter’ key after typing this command in the toolbar we can see our Kali Machine with Responder running in the background begins to execute its attack and the only thing we are prompted to do is enter in a username and password on the Windows 7 machine but it does not matter if we do or not because our attack has already taken place. 
-![Improper DNS]()
-![Listening]()
+
+![Listening](img/responder/listening.png)
+
 Navigating over back over to our Kali Machine and into the ‘/usr/share/responder/logs/ directory we can see that we have generated a new file called ‘SMBv2-NTLMv2-SSP-192.168.150.201.txt’. 
 Looking at this file using the cat command, we can see that it contains a long hash. By using either hashcat or john the ripper, we can crack this hash to therefore obtain the username and password to the system.
-![Logs]()
 
-For this process we are going to use the lab machines to show that an attack against the Windows 7 machine (.200) from the Kali Machine (.10). 
-As stated previously we are going to use the responder tool in Kali Linux to perform an ‘Man-in-the-Middle’ attack by intercepting the traffic flow from a bad DNS server call from the Windows 7 machine. 
-Once we send an LLMNR or a NETBIOS broadcast from the Kali Machine, the Windows 7 machine will accept this broadcast. 
-Once this broadcast has been accepted, our attacker will grab a file named ‘SMBv2-NTLMv2-SSP-192.168.150.201.txt’ in which we can decrypt in order to see the username and passwords. 
+![Logs](img/responder/logs.png)
 
-Now that we know what exactly will happen on the network, we can easily see how our IDS needs to be implemented in order to help prevent this attack. 
-To prevent this attack, all we need to check for is if the source IP address is not the source IP addresses of the DNS server or the Windows 7 machine which we will already know as we are familiar with what network we are on. 
-If this source IP address is not the Windows 7 machine (192.168.x.201) or the DNS server we are trying to connect to, then we need to check what source is sending packets. 
-For this instance, our behavioral IDS checks to see that the source equals 192.168.x.201, if it does not match, then we send a message to the user saying that there is an issue. 
-These checks are done on both NBNS protocols and LLMNR protocols as shown below.
+
+
 
 ### 6. CVE
-
 
 ## II. Code Walkthrough
 
@@ -264,14 +361,10 @@ After the adapter names are enumerated the user will be prompted to select which
 
 ```python
 def _choose_interface():
-    """
-    Allows user to select interface based
-    on system interfaces
-    """
     interfaces = netifaces.interfaces()
 
     if os.name == 'nt':
-        # allows windows machines to choose interfaces
+
         iface_names = ['(unknown)' for i in range(len(interfaces))]
         reg = wr.ConnectRegistry(None, wr.HKEY_LOCAL_MACHINE)
         reg_key = wr.OpenKey(
@@ -466,8 +559,60 @@ def behavioral_detection(file=None, **kwargs):
     return detected
 ```
 
-## III. Screenshots
+## III. Detection
 
+### 0. Setup
+
+Before running any of the detections you must ensure the framework is setup properly
+
+* Ensure Python 3 is installed
+    * If you are running on a *NIX system or Mac it should be installed by default
+        * Run `python3 -V` to double check
+        * If that command fails try `python -V`, as long as the version is greater than 3.6 the program will work
+    * To install python 3 run
+        * Debian Based
+            * `sudo apt install python3 python3-pip -y`
+        * Mac
+            * `brew install python3`
+            * `sudo easy_install pip`
+        * Windows
+            * `choco install python3`
+* Ensure Wireshark is installed
+    * Debian Based
+        * `sudo apt install wireshark -y`
+    * Mac
+        * `brew cask install wireshark`
+    * Windows
+        * `choco install wireshark`
+* Install Python dependancies
+    * Make sure you are in the root directory for this project
+    * `pip3 install -r requirements.txt`
+
+### 1. NMAP ACK Scan
+
+Simply run `python3 src/ids.py` to start the IDS. 
+It will prompt you for the interface you want to listen on.
+
+![ACK Detection](img/nmap/ack_detection.png)
+
+### 2. NMAP SYN Scan
+
+
+![SYN Detection](img/nmap/syn_detection.png)
+
+### 3. NMAP XMAS Scan
+
+![XMAS Detection](img/nmap/xmas_detection.png)
+
+### 4. Ettercap
+
+![Host Discovery Detection](img/ettercap/HostDiscoveryDetection.PNG)
+
+![Gratuitous ARP Detection](img/ettercap/GratuitousArp.PNG)
+
+### 5. Responder
+
+### 6. CVE
 
 # Recommendations
 
@@ -841,3 +986,15 @@ def behavioral_detection(file=None, **kwargs):
 [8]: https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/
 [9]: https://linux.die.net/man/8/ettercap
 [10]: https://linux.die.net/man/1/nmap
+
+
+For this process we are going to use the lab machines to show that an attack against the Windows 7 machine (.200) from the Kali Machine (.10). 
+As stated previously we are going to use the responder tool in Kali Linux to perform an ‘Man-in-the-Middle’ attack by intercepting the traffic flow from a bad DNS server call from the Windows 7 machine. 
+Once we send an LLMNR or a NETBIOS broadcast from the Kali Machine, the Windows 7 machine will accept this broadcast. 
+Once this broadcast has been accepted, our attacker will grab a file named ‘SMBv2-NTLMv2-SSP-192.168.150.201.txt’ in which we can decrypt in order to see the username and passwords. 
+
+Now that we know what exactly will happen on the network, we can easily see how our IDS needs to be implemented in order to help prevent this attack. 
+To prevent this attack, all we need to check for is if the source IP address is not the source IP addresses of the DNS server or the Windows 7 machine which we will already know as we are familiar with what network we are on. 
+If this source IP address is not the Windows 7 machine (192.168.x.201) or the DNS server we are trying to connect to, then we need to check what source is sending packets. 
+For this instance, our behavioral IDS checks to see that the source equals 192.168.x.201, if it does not match, then we send a message to the user saying that there is an issue. 
+These checks are done on both NBNS protocols and LLMNR protocols as shown below.
