@@ -55,6 +55,20 @@ I've also included an additional run of ettercap from my home lab that clearly s
 the process arp is using for arp poisoning
 
 
+
+On Detecting Poisoning:
+After looking at the two pcap files related to arp poisoning with ettercap two characteristics are immediately 
+obvious. 
+	1. When host discovery occurs there is a fload of arp request boradcasted over the network with one sole
+	sender- the attacker.
+	2. When a machine is targeted, there is a gratuitous arp broadcasted throughout the network:
+	Generally speaking, this is associated with a warning 'duplicated ip address detected for 192.168.61.129' or whatever
+	the target machine's ip address is on the network.
+		arp.duplicate-address-detected
+	this flag will help find if any packets contain that warning...
+
+when targeted, arp replies were sent on the network continuously
+
 	
 
 	
