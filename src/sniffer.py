@@ -17,7 +17,7 @@ import pyshark
 import netifaces
 
 
-def _choose_interface():
+def choose_interface():
     """
     Allows user to select interface based
     on system interfaces
@@ -77,7 +77,7 @@ def _sniff(interface=None, timeout=10, continuous=True, out_file=None):
         capture object
     """
     if not interface:
-        interface = _choose_interface()
+        interface = choose_interface()
 
     # if out_file is provided, output capture
     if out_file:

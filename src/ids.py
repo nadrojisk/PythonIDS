@@ -4,13 +4,23 @@ Main IDS Driver
 Author: Jordan Sosnowski, Charles Harper, John David Watts
 Date: Dec 6, 2019
 """
-
 import multiprocessing
+import os
+import sniffer
 import ids_nmap
 import ids_ettercap
 import ids_responder
 
-INTERFACE = 'etho'
+
+def clear():
+
+    # for windows
+    if os.name == 'nt':
+        _ = os.system('cls')
+
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = os.system('clear')
 
 
 def main():
@@ -20,20 +30,22 @@ def main():
     Uses multiprocessing to run each detection algorithm
 
     """
+    interface = sniffer.choose_interface()
+    clear()
     print('Sniffing...')
 
     xmas = multiprocessing.Process(
-        target=ids_nmap.xmas_signature_detection, kwargs={'interface': INTERFACE, 'continuous': True})
+        target=ids_nmap.xmas_signature_detection, kwargs={'interface': interface, 'continuous': True})
     ack = multiprocessing.Process(
-        target=ids_nmap.ack_heuristic_detection, kwargs={'interface': INTERFACE, 'continuous': True})
+        target=ids_nmap.ack_heuristic_detection, kwargs={'interface': interface, 'continuous': True})
     syn = multiprocessing.Process(
-        target=ids_nmap.syn_heuristic_detection(), kwargs={'interface': INTERFACE, 'continuous': True})
+        target=ids_nmap.syn_heuristic_detection, kwargs={'interface': interface, 'continuous': True})
     ettercap_1 = multiprocessing.Process(
-        target=ids_ettercap.heuristic_detection, kwargs={'interface': INTERFACE, 'continuous': True})
+        target=ids_ettercap.heuristic_detection, kwargs={'interface': interface, 'continuous': True})
     ettercap_2 = multiprocessing.Process(
-        target=ids_ettercap.behavioral_detection, kwargs={'interface': INTERFACE, 'continuous': True})
+        target=ids_ettercap.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
     responder = multiprocessing.Process(
-        target=ids_responder.behavioral_detection, kwargs={'interface': INTERFACE, 'continuous': True})
+        target=ids_responder.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
 
     # starting individual threads
     xmas.start()
