@@ -9,7 +9,7 @@ titlepage: "true"
 titlepage-rule-color: "FFFFFF"
 titlepage-background: "./background8.pdf"
 ---
-
+\newpage
 # Executive summary
 
 For this project we were tasked with producing a Python based intrusion detection system (IDS).
@@ -32,46 +32,48 @@ However, manually analyzing data streams is feasibly impossible especially for l
 To combat this intrusion detection systems can be used to slim down the amount of data analyst have to sift through.
 
 This framework is a Python implementation for an Intrusion Detection System. 
-It aims to detect NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap ARP Poisoning, Metasploit's ms17_010_psexec exploit, and Responder's Windows DNS spoofing. 
+It aims to detect NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap ARP Poisoning, Metasploit's ms17_010_psexec exploit, and Responder's Windows LLMNR and NetBIOS name service spoofing. 
 The framework uses different IDS methods to achieve this goal.
 
 ## II. Background
 
-### 1. Intrusion Detection System
+To fully understand some of the processes and applications discussed in this paper a background in these methodologies  needs to be established. 
+
+### 1. Intrusion Detection System^[14]^
 
 Software or device that analyzes network traffic for malicious activity.
 Malicious activity is usually flagged, with the administrator of the network being notified of the incident.
 IDS systems can also be configured to stop detected intrusions.
 
-### 2. Host Based Intrusion Detection System
+### 2. Host Based Intrusion Detection System^[14]^
 
-A host based IDS is an intrusion detection system that is run on the computers on the network.
+An intrusion detection system that is run on the computers on the network.
 The opposite of a host based IDS is a *network based IDS* where the IDS is instead run on the network switches / routers.
 The downside for a host based IDS is while running on a switched network an IDS will only be able to see traffic destined to or from the host it is running on.
 This is due to the fact that on switched networks the switch will only forward packets to the intended ports.
 If it was a hub network, a Wi-Fi network, or the switch was configured to have a trunk port then a host based IDS would be able to see all the traffic on the network.
 
-### 3. Behavior IDS
+### 3. Behavior Based Detection^[15]^
 
 Analyzes traffic using a *known baseline*.
 If the traffic is not close to this baseline the traffic will be flagged.
 An example would be if a network is known to only have FTP traffic but for some reason there is now packets using SSH and SFTP traffic it should be flagged.
 Of course in this example a user could have spun up a box that uses SSH or SFTP but since the baseline is used to seeing only FTP it is abnormal traffic.
 
-### 4. Anomaly IDS
+### 4. Anomaly Based Detection^[13]^
 
 Attempts to find abnormal *protocol* activity.
 Protocols adhere to strict guidelines, most are defined in RFCs.
 If for instance, there is traffic on a network that shows a protocol not adhering to its normal activity it should be flagged.
-This is different from a behavior IDS because it is focused on *protocol* activity while behavior is focused on looking at what is *normal* for a network.
+This is different from a behavior based detection model because it is focused on *protocol* activity while behavior is focused on looking at what is *normal* for a network.
 
-### 5. Signature IDS
+### 5. Signature Based Detection^[12]^
 
-Searches network traffic for **specific patterns**.
+Searches network traffic for *specific patterns*.
 Malicious traffic usually has telltale signs, and if these *signs* are seen in packets they should be flagged as malicious.
 If for instance it is known that a recent strain of a popular malware communicate with a server **www.bad_malware.com** on port **8080** then any packets destined to this address and port should be flagged.
 
-### 6. Heuristic IDS
+### 6. Heuristic Based Detection^[11]^
 
 Uses algorithms or *simple rules* to determine compromise.
 Can combine signature, anomaly, and behavior tactics.
@@ -79,34 +81,34 @@ For example it would be odd for a single IP to scan multiple different ports wit
 A simple rule could check and see if a unique IP has more than 20 unique destination ports plus using the signature of length zero data packets.
 If this rule is triggered one can assume it is malicious.
 
-### 7. NMAP
+### 7. NMAP^[10]^
 
 A free and open-source network scanner and mapper tool used both by information security experts and malicious users.
 NMAP provides a huge number of features for scanning and probing networks.
 
-### 8. Ettercap
+### 8. Ettercap^[9]^
 
 A 'multipurpose sniffer/content filter' for man in the middle attacks.
 It was originally created as a sniffer for switched LANs, but evolved into a tool meant for man-in-the middle-attacks. 
 
-### 9. Responder
+### 9. Responder^[18]^
 
 A tool that allows us to use LLMNR, NBT-NS, and MDNS poisoning. What this means is that we can use an LLMNR and NBT-NS Spoofing attack against a network. This sort of attack takes advantage of default Windows configurations in order to achieve its end goal. 
 
-### 10. Link-Local Multicast Name Resolution (LLMNR) 
+### 10. Link-Local Multicast Name Resolution (LLMNR)^[16]^
 
 A protocol based on the Domain Name System packet format that allows hosts to perform name resolution for hosts on the same local link.
 
-### 11. NetBIOS-NS (NBT-NS)
+### 11. NetBIOS-NS (NBT-NS)^[17]^
 
 Name Service provided by NetBIOS that provides name registration and resolution. 
 Identifies the systems on a local network by their NetBIOS name.
 
-### 12. NetBIOS
+### 12. NetBIOS^[19]^
 
 Provides services related to the session layer of the OSI model allowing applications on separate computers to communicate over a local area network.
 
-### 11. Metasploit
+### 11. Metasploit^[20]^
 
 A Ruby-based open source penetration testing framework, that allows for a systematic vulnerability probe into a network.
 It is operated via a command line interface or graphical user interface, that allows the user to choose the target, exploit, and payload to use against the target system.
@@ -121,15 +123,18 @@ Each exact vulnerability is detailed in CVE-2017-0143, CVE-2017-0144, CVE-2017-0
 
 ## I. Attack Explanations
 
-### 1. NMAP ACK Scan <sup>[2]</sup>
+We will now discuss how the different attacks work.
+Understanding why and how attacks work is critical for detecting them.
 
-This scan are different than the other two scans discussed in this report.
-Its main purpose is to map out if a firewall is active and filtering certain ports or not.
+### 1. NMAP ACK Scan ^[2]^
+
+This scan is different than the other two scans discussed in this report.
+Its main purpose is to map out if a certain ports are filtered by an active firewall.
 If a system is *unfiltered*, not running a firewall, *open* and *closed* ports will return a **RST** packet.
 However, if a system is *filtered*, running a firewall, ports will not respond at all.
-This type of scan *will not* detect if ports are open or closed.
+This type of scan *cano not* determine if ports are open or closed.
 
-### 2. NMAP SYN Scan <sup>[2]</sup>
+### 2. NMAP SYN Scan ^[2]^
 
 This scan is the default scan for NMAP scanning. 
 This scan is rather fast and stealthy due to the fact that if never completes a full TCP handshake.
@@ -137,13 +142,13 @@ NMAP will send a *SYN* packet and an *open* port will respond with a **SYN/ACK**
 If no response is returned it is assumed the port is *filtered*. 
 
 
-### 3. NMAP XMAS Scan <sup>[2]</sup>
+### 3. NMAP XMAS Scan ^[2]^
 
-This scan exploits a behavior built into RFC 793 to differentiate between open and closed ports.
-"If the [desintation] port state is *CLOSED* ... an incoming segment nont containing a *RST* causes a *RST* to be sent in response" and. Therefore no response will mean that the port is either *open* or *filtered*. 
+This scan exploits a behavior built into RFC 793^[21]^ to differentiate between open and closed ports.
+"If the [desintation] port state is *CLOSED* ... an incoming segment nont containing a *RST* causes a *RST* to be sent in response." Therefore no response will mean that the port is either *open* or *filtered*. 
 The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags. 
 
-### 4. Ettercap <sup>[2]</sup>
+### 4. Ettercap ^[3]^
 
 The first thing Ettercap does is it scans the network for active hosts. 
 Below you can notice several ARP requests in a row all coming from the same host- this is the host discovery step. 
@@ -176,12 +181,16 @@ Once the attacker accepts the connection from the spoofed machine, we can then u
 While this authentication is taking place, the client will send the spoofed machine a NTLMv2 hash for the user that it is trying to authenticate. 
 If we can capture this hash, it can be cracked offline of the network with a few of the tools that we have learned this semester such as: Hashcat or John the Ripper. 
 A figure of this entire process is shown below to aid your understanding of what kind of attack we are going to perform with the responder tool. 
-![Basic attack where a user mistypes the server name]()
+
+![Basic attack where a user mistypes the server name](img/responder/basic_attack.png)
 
 
-### 6. CVE
+### 6. CVE^[22]^
 
 ## II. Attack Walkthrough
+
+Now we will go through how you can set up these attacks.
+Using data created by actual attacks can be very valuable in creating an IDS.
 
 ### 1. NMAP ACK Scan
 
@@ -189,11 +198,11 @@ The NMAP Scans are by far the most trivial to setup.
 
 * First install NMAP
     * Debian Based Systems
-        * sudo apt install nmap -y
+        * `sudo apt install nmap -y`
     * Mac
-        * brew install nmap
+        * `brew install nmap`
     * Windows
-        * choco install nmap
+        * `choco install nmap`
 * Figure out the IP or IP ranges you wish to scan
 * Ensure you are on the network about to be scanned, or can access it
 * Run `nmap -sA [ip]`
@@ -226,13 +235,13 @@ For XMAS Scan's the first two steps are the same, ensure NMAP is intalled, and f
 
 ### 4. Ettercap
 
-* First installed ettercap
+* First install ettercap
     * Debian Based: 
-        * sudo apt install ettercap -y
+        * `sudo apt install ettercap -y`
     * Mac
-        * brew install ettercap 
+        * `brew install ettercap`
     * Windows
-        * choco install ettercap
+        * `choco install ettercap`
 
 * Connect to the network that you will be targeting
 
@@ -255,17 +264,15 @@ For XMAS Scan's the first two steps are the same, ensure NMAP is intalled, and f
 ![Interface Selection](img/ettercap/UnifiedSniffingInterfaceSelection.PNG)
 
 * Identify hosts
-	Now for the exciting part, host discovery. ettercap has a host discovery
-	function where is sents arp requests for the range of ip on the subnet.
-	With those we find 9 different hosts:
+    * Ettercap has a host discovery function where is sents arp requests for the range of ip on the subnet. With those we find 9 different hosts:
 
 ![Host Discovery](img/ettercap/HostDiscoveryDropdown.PNG)
 
 ![Host Discovery](img/ettercap/discovered_hosts.PNG)
 
 * Select Hosts to target with ARP spoofing
-	* next, from the host list, we add the target ip address to 'target 1' and then go to the target list under the target tab
-	* From there we highlught the target, navigate the the 'MITM' tab, select ARP Poisoning, and then select the first option, 'sniff remote connections' and let the program do what it does best.
+	* Next, from the host list, we add the target ip address to 'target 1' and then go to the target list under the target tab
+	* From there we highlight the target, navigate the the 'MITM' tab, select ARP Poisoning, and then select the first option, 'sniff remote connections' and let the program do what it does best.
 
 ![Target Selection](img/ettercap/TargetSelection.PNG)
 
@@ -275,16 +282,17 @@ For XMAS Scan's the first two steps are the same, ensure NMAP is intalled, and f
 
 ### 5. Responder
 
-We will now show a basic attack with the Responder tool using the Kali Machine (.10) against the Windows Machine (.201). 
-For this demonstration, we assume that you have the version that is already installed on the Kali Machine(.10).
+* First install responder
+    * `git clone https://github.com/SpiderLabs/Responder.git`
+    * `cd Responder/`
 
-The first step in our process is to go ahead and get Responder running on our attack machine. 
-We can do this by running the command: `responder -I eth0 -wrFb`
+After that we need to go ahead and get Responder running on our attack machine. 
+We can do this by running the command: `Responder.py -I eth0 -wrFb`
 
 ![Setup Responder](img/responder/responder.png)
 
-Once we have Responder up and running on our attack machine, we can navigate over to our Windows 7 victim machine (.201) and open up the File Explorer. 
-Once here we can click on the top toolbar and enter in ‘\\abc’ to simulate a user tying the wrong SMB server name. 
+Once we have Responder up and running on our attack machine, we can navigate over to our Windows 7 victim machine and open up the File Explorer. 
+Once here we can click on the top toolbar and enter in ‘\\\\abc’ to simulate a user tying the wrong SMB server name. 
 
 ![Improper DNS](img/responder/improper_dns.png)
 
@@ -298,18 +306,17 @@ Looking at this file using the cat command, we can see that it contains a long h
 
 ![Logs](img/responder/logs.png)
 
-
-
-
 ### 6. CVE
 
 ## II. Code Walkthrough
+
+This section will explain the various modules that make up our IDS implementation. 
 
 ### 1. Sniffer 
 
 Our first module that was built was the sniffer module. 
 This module uses pyshark, a python wrapper for tshark which is the terminal version of wireshark, to sniff traffic. 
-`get_capture` takes in either a file and an arbitrary amount of named parameters which are all grabbed by **kwargs<sup>[1]</sup>. 
+`get_capture` takes in either a file and an arbitrary amount of named parameters which are all grabbed by **kwargs^[1]^. 
 If a file is passed `_read_cap` is called else `_sniff` is called.
 ```python
 def get_capture(file=None, **kwargs):
@@ -331,7 +338,7 @@ def _read_cap(in_file):
 `_sniff` is a little bit more complex. 
 It takes in four arguments: *interface*, *timeout*, *continuous*, and *out_file*.
 *interface* is a string that relates to the interface on the machine that you want to sniff on. 
-If an interface is not provided then `_choose_interface` will be called.
+If an interface is not provided then `choose_interface` will be called.
 *timeout* is an integer that represents how many packeets you would like to capture.
 *continous* is a boolean, that if True allows you to capture continuously instead of just a number of packets.
 *out_file* is a string, that if provided, will allow the user to output their capture to a pcap.
@@ -339,7 +346,7 @@ If an interface is not provided then `_choose_interface` will be called.
 ```python
 def _sniff(interface=None, timeout=10, continuous=True, out_file=None):
     if not interface:
-        interface = _choose_interface()
+        interface = choose_interface()
 
     if out_file:
         capture = pyshark.LiveCapture(output_file=out_file,
@@ -363,7 +370,7 @@ However, doing registry lookups with *winreg* a builtin module found only on Win
 After the adapter names are enumerated the user will be prompted to select which adapter they would like to sniff on.
 
 ```python
-def _choose_interface():
+def choose_interface():
     interfaces = netifaces.interfaces()
 
     if os.name == 'nt':
@@ -392,7 +399,7 @@ def _choose_interface():
     return interfaces[selection]
 ```
 
-### 2. IDS_Nmap
+### 2. IDS NMAP
 
 `sniffer` is used in all of the IDS detection modules. 
 One of these modules is `ids_nmap`.
@@ -562,7 +569,65 @@ def behavioral_detection(file=None, **kwargs):
     return detected
 ```
 
+
+### 5. IDS CVE
+
+### 6. IDS
+
+The IDS will first check and see if the program was called with an additional command line arguments.
+If it was it will be assumed that it was the interface that the user wants to sniff on.
+If there are no additional arguments the user will be prompted with a list of interfaces to choose from produced by `sniffer.choose_interface`.
+After this, the command line is cleared and the program will move on to the sniffing portion.
+
+```python
+if len(sys.argv) > 1:
+    interface = sys.argv[1]
+else:
+    interface = sniffer.choose_interface()
+clear()
+print('Sniffing...')
+```
+
+Due to our architecture of the framework each individual detection methods sniffs on its own packets and has its own iterator.
+Because of this fact, to run each detection one after another would not correctly protect the host.
+To get around this we use Python's multiprocessing module.
+Each detection method will run its own process so that all the detections can happen asynchronously.
+ 
+```python
+xmas = multiprocessing.Process(
+    target=ids_nmap.xmas_signature_detection, kwargs={'interface': interface, 'continuous': True})
+ack = multiprocessing.Process(
+    target=ids_nmap.ack_heuristic_detection, kwargs={'interface': interface, 'continuous': True})
+syn = multiprocessing.Process(
+    target=ids_nmap.syn_heuristic_detection, kwargs={'interface': interface, 'continuous': True})
+ettercap_1 = multiprocessing.Process(
+    target=ids_ettercap.heuristic_detection, kwargs={'interface': interface, 'continuous': True})
+ettercap_2 = multiprocessing.Process(
+    target=ids_ettercap.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
+responder = multiprocessing.Process(
+    target=ids_responder.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
+```
+
+Below we start each process and wait for process to end.
+```python
+xmas.start()
+ack.start()
+syn.start()
+ettercap_1.start()
+ettercap_2.start()
+responder.start()
+
+xmas.join()
+ack.join()
+syn.join()
+ettercap_1.join()
+ettercap_2.join()
+responder.join()
+print("Done!")
+```
 ## III. Detection
+
+Here we discuss how to setup our IDS system and show it working against live attacks.
 
 ### 0. Setup
 
@@ -590,32 +655,51 @@ Before running any of the detections you must ensure the framework is setup prop
 * Install Python dependancies
     * Make sure you are in the root directory for this project
     * `pip3 install -r requirements.txt`
+* Ensure the hardcoded IP in `src/ids_responder.py` is correct for your network.
 
-### 1. NMAP ACK Scan
+### 1. Running the IDS
 
-Simply run `python3 src/ids.py` to start the IDS. 
-It will prompt you for the interface you want to listen on.
+Simply run `python3 src/ids.py {interface}` to start the IDS. 
+It will prompt you for the interface you want to listen on or you can pass it as a command line argument.
+It will automatically sniff for all types of attacks.
+Currently we do not have it so you can pick and choose which attacks to listen for.
+
+### 2. NMAP ACK Scan
 
 ![ACK Detection](img/nmap/ack_detection.png)
 
-### 2. NMAP SYN Scan
-
+### 3. NMAP SYN Scan
 
 ![SYN Detection](img/nmap/syn_detection.png)
 
-### 3. NMAP XMAS Scan
+### 4. NMAP XMAS Scan
 
 ![XMAS Detection](img/nmap/xmas_detection.png)
 
-### 4. Ettercap
+### 5. Ettercap
 
 ![Host Discovery Detection](img/ettercap/HostDiscoveryDetection.PNG)
 
 ![Gratuitous ARP Detection](img/ettercap/GratuitousArp.PNG)
 
-### 5. Responder
+### 6. Responder
 
-### 6. CVE
+For this process we are going to use the lab machines to show that an attack against the Windows 7 machine (.200) from the Kali Machine (.10). 
+As stated previously we are going to use the responder tool in Kali Linux to perform an ‘Man-in-the-Middle’ attack by intercepting the traffic flow from a bad DNS server call from the Windows 7 machine. 
+Once we send an LLMNR or a NETBIOS broadcast from the Kali Machine, the Windows 7 machine will accept this broadcast. 
+Once this broadcast has been accepted, our attacker will grab a file named ‘SMBv2-NTLMv2-SSP-192.168.150.201.txt’ in which we can decrypt in order to see the username and passwords. 
+
+Now that we know what exactly will happen on the network, we can easily see how our IDS needs to be implemented in order to help prevent this attack. 
+To prevent this attack, all we need to check for is if the source IP address is not the source IP addresses of the DNS server or the Windows 7 machine which we will already know as we are familiar with what network we are on. 
+If this source IP address is not the Windows 7 machine (192.168.x.201) or the DNS server we are trying to connect to, then we need to check what source is sending packets. 
+For this instance, our behavioral IDS checks to see that the source equals 192.168.x.201, if it does not match, then we send a message to the user saying that there is an issue. 
+These checks are done on both NBNS protocols and LLMNR protocols as shown below.
+
+![LLMNR Detection](img/responder/LLMNR_detection.png)
+
+![NBNS Detection](img/responder/NBNS_detection.png)
+
+### 7. CVE
 
 # Recommendations
 
@@ -623,7 +707,9 @@ It will prompt you for the interface you want to listen on.
 # Conclusion
 
 
-# Appendix
+# Source Code
+
+You will find below the raw source code of the framework.
 
 ## I. Sniffer Code
 
@@ -647,7 +733,7 @@ import pyshark
 import netifaces
 
 
-def _choose_interface():
+def choose_interface():
     """
     Allows user to select interface based
     on system interfaces
@@ -707,7 +793,7 @@ def _sniff(interface=None, timeout=10, continuous=True, out_file=None):
         capture object
     """
     if not interface:
-        interface = _choose_interface()
+        interface = choose_interface()
 
     # if out_file is provided, output capture
     if out_file:
@@ -979,6 +1065,50 @@ def behavioral_detection(file=None, **kwargs):
 
 # References
 
+1: https://stackoverflow.com/questions/1769403/what-is-the-purpose-and-use-of-kwargs
+
+2: https://nmap.org/book/man-port-scanning-techniques.html
+
+3: https://pentestmag.com/ettercap-tutorial-for-windows/
+
+4: https://www.notsosecure.com/pwning-with-responder-a-pentesters-guide/
+
+5: https://tools.kali.org/sniffingspoofing/responder
+
+6: https://forums.kali.org/showthread.php?36036-Penetration-Testing-How-to-use-Responder-py-to-Steal-Credentials
+
+7: https://www.4armed.com/blog/llmnr-nbtns-poisoning-using-responder/
+
+8: https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/
+
+9: https://linux.die.net/man/8/ettercap
+
+10: https://linux.die.net/man/1/nmap
+
+11: https://en.wikipedia.org/wiki/Heuristic_analysis
+
+12 : https://en.wikipedia.org/wiki/Intrusion_detection_system#Signature-based
+
+13: https://en.wikipedia.org/wiki/Intrusion_detection_system#Anomaly-based
+
+14: https://en.wikipedia.org/wiki/Intrusion_detection_system
+
+15: https://whatis.techtarget.com/definition/behavior-based-security
+
+16: https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution
+
+17: https://en.wikipedia.org/wiki/NetBIOS#Name_service
+
+18: https://github.com/lgandx/Responder
+
+19: https://en.wikipedia.org/wiki/NetBIOS
+
+20: https://en.wikipedia.org/wiki/Metasploit_Project
+
+21: https://tools.ietf.org/html/rfc793
+
+22: https://null-byte.wonderhowto.com/how-to/exploit-eternalblue-windows-server-with-metasploit-0195413/
+
 [1]: https://stackoverflow.com/questions/1769403/what-is-the-purpose-and-use-of-kwargs
 [2]: https://nmap.org/book/man-port-scanning-techniques.html
 [3]: https://pentestmag.com/ettercap-tutorial-for-windows/
@@ -989,15 +1119,16 @@ def behavioral_detection(file=None, **kwargs):
 [8]: https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/
 [9]: https://linux.die.net/man/8/ettercap
 [10]: https://linux.die.net/man/1/nmap
+[11]: https://en.wikipedia.org/wiki/Heuristic_analysis
+[12]: https://en.wikipedia.org/wiki/Intrusion_detection_system#Signature-based
+[13]: https://en.wikipedia.org/wiki/Intrusion_detection_system#Anomaly-based
+[14]: https://en.wikipedia.org/wiki/Intrusion_detection_system
+[15]: https://whatis.techtarget.com/definition/behavior-based-security
+[16]: https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution
+[17]: https://en.wikipedia.org/wiki/NetBIOS#Name_service
+[18]: https://github.com/lgandx/Responder
+[19]: https://en.wikipedia.org/wiki/NetBIOS
+[20]: https://en.wikipedia.org/wiki/Metasploit_Project
+[21]: https://tools.ietf.org/html/rfc793
+[22]: https://null-byte.wonderhowto.com/how-to/exploit-eternalblue-windows-server-with-metasploit-0195413/
 
-
-For this process we are going to use the lab machines to show that an attack against the Windows 7 machine (.200) from the Kali Machine (.10). 
-As stated previously we are going to use the responder tool in Kali Linux to perform an ‘Man-in-the-Middle’ attack by intercepting the traffic flow from a bad DNS server call from the Windows 7 machine. 
-Once we send an LLMNR or a NETBIOS broadcast from the Kali Machine, the Windows 7 machine will accept this broadcast. 
-Once this broadcast has been accepted, our attacker will grab a file named ‘SMBv2-NTLMv2-SSP-192.168.150.201.txt’ in which we can decrypt in order to see the username and passwords. 
-
-Now that we know what exactly will happen on the network, we can easily see how our IDS needs to be implemented in order to help prevent this attack. 
-To prevent this attack, all we need to check for is if the source IP address is not the source IP addresses of the DNS server or the Windows 7 machine which we will already know as we are familiar with what network we are on. 
-If this source IP address is not the Windows 7 machine (192.168.x.201) or the DNS server we are trying to connect to, then we need to check what source is sending packets. 
-For this instance, our behavioral IDS checks to see that the source equals 192.168.x.201, if it does not match, then we send a message to the user saying that there is an issue. 
-These checks are done on both NBNS protocols and LLMNR protocols as shown below.
