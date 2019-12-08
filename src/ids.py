@@ -4,6 +4,7 @@ Main IDS Driver
 Author: Jordan Sosnowski, Charles Harper, John David Watts
 Date: Dec 6, 2019
 """
+import sys
 import multiprocessing
 import os
 import sniffer
@@ -30,7 +31,10 @@ def main():
     Uses multiprocessing to run each detection algorithm
 
     """
-    interface = sniffer.choose_interface()
+    if len(sys.argv) > 1:
+        interface = sys.argv[1]
+    else:
+        interface = sniffer.choose_interface()
     clear()
     print('Sniffing...')
 
