@@ -1,5 +1,6 @@
-import src.sniffer as sniffer
+import sniffer as sniffer
 
-cap = sniffer.sniff('en0')
+cap = sniffer._sniff(continuous=True)
 
-sniffer.dump_cap(cap)
+for p in cap:
+    p.pretty_print()

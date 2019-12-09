@@ -1,0 +1,40 @@
+
+About Metasploit:
+  -https://www.csoonline.com/article/3379117/what-is-metasploit-and-how-to-use-this-popular-hacking-tool.html
+  -https://www.varonis.com/blog/what-is-metasploit/
+  -https://metasploit.help.rapid7.com/docs
+  
+About ms17_010_psexec
+  -https://github.com/iagox86/metasploit-framework-webexec/blob/master/documentation/modules/exploit/windows/smb/ms17_010_psexec.md
+  -https://www.rapid7.com/db/modules/exploit/windows/smb/ms17_010_psexec
+  
+About MS_010
+  -https://www.cyber.nj.gov/alerts-and-advisories/20180209/eternalchampion-eternalromance-and-eternalsynergy-modified-to-exploit-all-windows-versions-since-windows-2000
+  -https://www.fireeye.com/blog/threat-research/2017/05/smb-exploited-wannacry-use-of-eternalblue.html
+  
+About PSExec
+  -https://blog.rapid7.com/2013/03/09/psexec-demystified/
+  
+About CVE-2017-014X
+  -https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010
+
+About MOF files
+  -https://docs.microsoft.com/en-us/windows/win32/wmisdk/managed-object-format--mof-
+
+About SCM
+  -https://en.wikipedia.org/wiki/Service_Control_Manager
+
+About DCE/RPC
+  -https://en.wikipedia.org/wiki/DCE/RPC
+
+About SMB
+  -https://richardkok.wordpress.com/2011/02/03/wireshark-determining-a-smb-and-ntlm-version-in-a-windows-environment/
+
+#About NTLM
+
+About Admin$ share
+  -https://en.wikipedia.org/wiki/Administrative_share
+  -http://www.intelliadmin.com/index.php/2007/10/the-admin-share-explained/
+
+About ICP$ share
+  -https://docs.netapp.com/ontap-9/index.jsp?topic=%2Fcom.netapp.doc.cdot-famg-cifs%2FGUID-5B56B12D-219C-4E23-B3F8-1CB1C4F619CE.html
