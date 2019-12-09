@@ -168,6 +168,7 @@ The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags.
 
 The first thing Ettercap does is it scans the network for active hosts. 
 Below you can notice several ARP requests in a row all coming from the same host- this is the host discovery step. 
+
 ![Host Discovery](img/ettercap/HostDiscoveryPackets.PNG)
 
 Following that, the attacker selects a victim. Following this selection, the attacker machine sent out gratuitous arp claiming that they are the machine associated with an ip address that they are sitting on. 
@@ -198,7 +199,7 @@ While this authentication is taking place, the client will send the spoofed mach
 If we can capture this hash, it can be cracked offline of the network with a few of the tools that we have learned this semester such as: Hashcat or John the Ripper. 
 A figure of this entire process is shown below to aid your understanding of what kind of attack we are going to perform with the responder tool. 
 
-![Basic attack where a user mistypes the server name](img/responder/basic_attack.png)
+![Basic attack where a user mistypes the server name](./img/responder/basic_attack.png)
 
 
 ### 6. Metasploit's ms17_010_psexec^[22]^
