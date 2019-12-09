@@ -13,9 +13,9 @@ titlepage-background: "./background8.pdf"
 # Executive summary
 
 For this project we were tasked with producing a Python based intrusion detection system (IDS).
-Our IDS is a host based IDS, by that we mean the scanner is ran on each host on the network.
-Since we are running on a switched network the IDS can only see traffic to or from the host it is running on.
-The IDS implementation protects against NMAP SYN Scans, ACK Scans, and XMAS Scans, Ettercap, Responder, Metasploit's ms17_010_psexec exploit.
+Specifically our IDS is a host based IDS, by that we mean the scanner is ran on each host on the network.
+Since the network we are running on is using a wired switch the IDS can only see traffic to or from the host it is running on.
+The IDS implementation protects against NMAP's SYN Scans, ACK Scans, and XMAS Scans, Ettercap's ARP Poisoning, Responder's LLMNR and NetBIOS-NS Poisoning, Metasploit's ms17_010_psexec exploit.
 We also use various types of detection systems to protect against attacks there are 4 covered: behavioral, anomaly, signature, and heuristic.
 
 # Introduction
@@ -791,6 +791,11 @@ for packet in packets:
         ids_ettercap.behavioral_detection(packet)
         ids_responder.behavioral_detection(packet)
 ```
+
+Currently our system only flags potentially malicious events. 
+It would be beneficial if the framework could be configured to actually act when it detects malicious traffic.
+Such as activating firewall rules to ignore certain IPs if it detects that it is being scanned. 
+
 Another recommendation would be to add a better way of adding new detectors.
 Currently we manually add them to be called as a new process.
 If we developed a plugin architecture to instead just look at which detectors, or "plugins" are in `src/` and load them automatically it would be much more developer friendly.
