@@ -356,7 +356,7 @@ Looking at this file using the cat command, we can see that it contains a long h
 
 As you can see from the image below, it is very easy to use this attack:
 
-![Initializing ms17_010_psexec](img/ms17_psexec/Running_ms17_psexec.png)
+![Initializing ms17_010_psexec](img/ms17_psexec/Running_ms17_010_psexec.png)
 
 ## II. Code Walkthrough
 
