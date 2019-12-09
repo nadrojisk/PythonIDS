@@ -763,6 +763,83 @@ These checks are done on both NBNS protocols and LLMNR protocols as shown below.
 
 # Recommendations
 
+The most important recommendation for our framework is regarding efficiency for our IDS.
+Currently we use a multiprocessing module to run all the detectors at the same time.
+We decided on this route because each detector sets up its own sniffer and iterators through the packets.
+If you were to call each detector without multiprocessing only the first detector would run as they run forever.
+However, running each detector as its own process allows them to run at the same time.
+This is not the most efficient way though.
+Each detector does not need its own sniffer, only one sniffer is truly needed with packets being sent to each detector.
+A quick mockup of a changed to increase effficiency is below
+In this implementation each detection would instead of creating a new sniffer and looping through each packet internally would take in a packet and determine whether or not it is malicious.
+
+```python
+
+if len(sys.argv) > 1:
+    interface = sys.argv[1]
+else:
+    interface = sniffer.choose_interface()
+clear()
+kwargs={'interface': interface, 'continuous': True}
+packets = sniffer.get_capture(**kwargs)
+
+for packet in packets:
+        ids_nmap.xmas_signature_detection(packet)
+        ids_nmap.ack_heuristic_detection(packet)
+        ids_nmap.syn_heuristic_detection(packet)
+        ids_ettercap.heuristic_detection(packet)
+        ids_ettercap.behavioral_detection(packet)
+        ids_responder.behavioral_detection(packet)
+```
+Another recommendation would be to add a better way of adding new detectors.
+Currently we manually add them to be called as a new process.
+If we developed a plugin architecture to instead just look at which detectors, or "plugins" are in `src/` and load them automatically it would be much more developer friendly.
+This could allow third party plugins to be added without modifying the IDS source code.
+
+Adding an ability to tell the IDS which detectors to run would also be beneficial.
+Currently we automatically run all the detectors programmed. 
+However, some networks may not have a Windows Domain controller and may not have a need to run a Responder detector.
+An implementation for this could be a configuration file that is passed via the command line to say which detectors to run
+If a configuration file is not passed the program could promopt the user to choose which detectors.
+A third option would be to allow a flag to be set either in the command line or the configuration file to just run all detectors.
+
+Building off of the configurations file concept it may be beneficial for some hardcoded values such as the domain controller IP or number of unique ports to be passed in the configuration file as well. An example is listed below
+
+```json
+{
+    "detectors": [
+        {
+            "title": "nmap-ack",
+            "active": true,
+            "args": ["uniq_ports 80"],
+        },
+        {
+            "title": "nmap-syn",
+            "active": false,
+        },
+        {
+            "title": "nmap-xmas",
+            "active": true,
+        },
+        {
+            "title": "ettercap",
+            "active": true,
+        },
+        {
+            "title": "responder",
+            "active": true,
+            "args": ["domain_ip 192.168.4.20"],
+        },
+        {
+            "title": "ms17_psexec",
+            "active": false,
+        },      
+    ]
+}
+```
+
+A final recommendation would be to add in a help manual.
+Currently we do not have many options that can be switched via the command line but it is trivial to add with Python's argparse.
 
 # Conclusion
 
