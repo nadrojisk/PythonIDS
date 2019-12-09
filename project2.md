@@ -173,10 +173,12 @@ The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags.
 
 Ettercap was originally intended to be used for packet sniffing on LAN networks but has evolved into a tool used primarily for man-in-the-middle attacks. One of the most common man-in-the-middle attacks, and one provided by Ettercap, is ARP poisoning.
 ARP poisoning is an attack that takes advantage of the communication method of the Address Resolution Protocol (ARP). ARP is used for mapping an internal LAN network. Each host has what is known as an 'ARP Table' where they keep track of internal ip addresses and the MAC address of that particular ip address.
-The reason for this protocol is to help route packets or frames to an individual host. When trying to route messages internally, computers will ask who has an ip address. This request is broadcasted across the ENTIRE network. If a computer has the associated ip address, they will reply to that message. 
+
+The reason for the ARP protocol is to help route packets or frames to an individual host. When trying to route messages internally, computers will ask who has an ip address. This request is broadcasted across the ENTIRE network. If a computer has the associated ip address, they will reply to that message. 
 The key points to keep in mind in this communication is that these messages are broadcasted and are NOT verified. ARP poisoning takes advantage of these points by first discovering all of the hosts, and mapping the network, finding ACTIVE hosts.
 Once the attacker has selected a victim machine, they send replies to ARP requests for the victim machine's ip address- these are known as 'Gratuitous ARP' messages. No machine has requested these, but because ARP can not verify if the host sending these messages is who they say they are the attacker can get away with the attack.
-Through sending these messages, the attacker is 'poisoning' the ARP tables of the network and more importantly the gateway or router of the network. When messages intended for the victim machine arrive in the network, they are routed to the attacker instead of the victim! 
+
+By sending these messages, the attacker is 'poisoning' the ARP tables of the network and more importantly the gateway or router of the network. When messages intended for the victim machine arrive in the network, they are routed to the attacker instead of the victim! 
 From this position, the attacker can perform several different attacks including but not limited to sniffing all of the traffic intended for the victim, hijacking any session the victim had, or modifying their traffic. 
 
 We will now walk you through the process of ARP poisoning with Ettercap.
@@ -612,7 +614,6 @@ def behavioral_detection(file=None, **kwargs):
 
 ```
 
-
 ### 4. IDS Responder 
 
 Responder's spoofing is one of the last attacks we are trying to protect against.
@@ -640,7 +641,6 @@ def behavioral_detection(file=None, **kwargs):
             pass
     return detected
 ```
-
 
 ### 5. IDS ms17_010_psexec
 
@@ -765,6 +765,14 @@ These checks are done on both NBNS protocols and LLMNR protocols as shown below.
 
 
 # Conclusion
+
+Intrusion Detection Systems provide a valuable and vital service to security professionals, corporations, and consumers.
+Succesful implementation of such a system into your network can help detect attacks and help prevent would-be 
+attackers from entering a network, in turn protecting sensitive or expensive data and resources.
+
+Building this IDS system provided the opporunity to learn about some of of the common attacks one might see while sitting on a network, detect red 
+flags when examining traffic on a network under attack, and automate or craft tools with networking and security capabilities.
+Each of these opportunities is invaluable when considering entering the information security workforce.
 
 
 # Source Code
