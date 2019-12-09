@@ -843,8 +843,10 @@ Building off of the configurations file concept it may be beneficial for some ha
 }
 ```
 
-A final recommendation would be to add in a help manual.
 Currently we do not have many options that can be switched via the command line but it is trivial to add with Python's argparse.
+Additionally when we detect that there is a malicious event we only print the event to standard output. 
+It would be better if we logged all events to a log file and have an option to run the IDS in verbose mode and have it print any malicious events to standard out as well. 
+Adding the time the event occurred as well as the IP which sent it would be helpful as well, since right now it is just the packet number. 
 
 # Conclusion
 
