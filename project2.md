@@ -172,8 +172,8 @@ The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags.
 ### 4. Ettercap ^[3]^
 
 Ettercap was originally intended to be used for packet sniffing on LAN networks but has evolved into a tool used primarily for man-in-the-middle attacks. One of the most common man-in-the-middle attacks, and one provided by Ettercap, is ARP poisoning.
-ARP poisoning is an attack that takes advantage of the communication method of the Address Resolutuon Protocol (ARP). ARP is used for mapping an internal LAN network. Each host has what is known as an 'ARP Table' where they keep track of internal ip addresses and the MAC address of that particular ip address.
-The reason for this protocol is to help route packets or frames to an individual host. When trying to route messages internally, computers will ask who has an ip address. This request is broadcasted accross the ENTIRE network. If a computer has the associated ip address, they will reply to that message. 
+ARP poisoning is an attack that takes advantage of the communication method of the Address Resolution Protocol (ARP). ARP is used for mapping an internal LAN network. Each host has what is known as an 'ARP Table' where they keep track of internal ip addresses and the MAC address of that particular ip address.
+The reason for this protocol is to help route packets or frames to an individual host. When trying to route messages internally, computers will ask who has an ip address. This request is broadcasted across the ENTIRE network. If a computer has the associated ip address, they will reply to that message. 
 The key points to keep in mind in this communication is that these messages are broadcasted and are NOT verified. ARP poisoning takes advantage of these points by first discovering all of the hosts, and mapping the network, finding ACTIVE hosts.
 Once the attacker has selected a victim machine, they send replies to ARP requests for the victim machine's ip address- these are known as 'Gratuitous ARP' messages. No machine has requested these, but because ARP can not verify if the host sending these messages is who they say they are the attacker can get away with the attack.
 Through sending these messages, the attacker is 'poisoning' the ARP tables of the network and more importantly the gateway or router of the network. When messages intended for the victim machine arrive in the network, they are routed to the attacker instead of the victim! 
@@ -201,7 +201,7 @@ This poses a huge threat as if the DNS name is not resolved, then the client (ak
 We can see now why this is a problem as this entire process is unauthenticated and broadcasted to the entire network. 
 This allows any machine on the network to respond and claim to be the target machine.
 
-Responder can use an LLMNR and NBT-NS spoofing to poision a network. 
+Responder can use an LLMNR and NBT-NS spoofing to poison a network. 
 This sort of attack takes advantage of default Windows configurations in order to achieve its end goal. 
 It is important to understand what a LLMNR and NBT-NS server broadcast is in order to understand how this kind of attack works. 
 When a DNS server request fails, Microsoft Windows systems use Link-Local Multicast Name Resolution (LLMNR) and the Net-BIOS Name Service (NBT-NS) for a “fallback” name resolution. 
@@ -266,19 +266,19 @@ The NMAP Scans are by far the most trivial to setup.
 
 ### 2. NMAP SYN Scan
 
-For SYN Scan's the first three steps are the same, ensure NMAP is intalled, and figure out the IP/IP ranges.
+For SYN Scan's the first three steps are the same, ensure NMAP is installed, and figure out the IP/IP ranges.
 
 * Run `nmap -sS [ip]`
     * `nmap -sS 192.168.5.10`
     * `nmap -sS 192.168.5.0/24`
 
-*Note: SYN Scans are the default scan in nmap so techincally you could just run `nmap ip`*
+*Note: SYN Scans are the default scan in nmap so technically you could just run `nmap ip`*
 
 ![SYN Scan](img/nmap/nmap_syn.png)
 
 ### 3. NMAP XMAS Scan
 
-For XMAS Scan's the first two steps are the same, ensure NMAP is intalled, and figure out the IP/IP ranges.
+For XMAS Scan's the first two steps are the same, ensure NMAP is installed, and figure out the IP/IP ranges.
 
 * Run `nmap -sX [ip]`
     * `nmap -sX 192.168.5.10`
@@ -317,7 +317,7 @@ For XMAS Scan's the first two steps are the same, ensure NMAP is intalled, and f
 ![Interface Selection](img/ettercap/UnifiedSniffingInterfaceSelection.PNG)
 
 * Identify hosts
-  * Ettercap has a host discovery function where is sents arp requests for the range of ip on the subnet. With those we find 9 different hosts:
+  * Ettercap has a host discovery function where it sends arp requests for the range of ip on the subnet. With those we find 9 different hosts:
 
 
 ![Host Discovery](img/ettercap/HostDiscoveryDropdown.PNG)
@@ -543,7 +543,7 @@ def syn_heuristic_detection(file=None, **kwargs):
 
 ### 3. IDS Ettercap
 
-Another type of attack we aim to detect against is Ettercap's ARP poisioning. 
+Another type of attack we aim to detect against is Ettercap's ARP poisoning. 
 `heuristic_detection` takes in the same parameters as seen before and passes it to `sniffer`. `heuristic_detection` checks for suspicious activity in the network traffic by looking for the host discovery process used by ettercap when setting up 
 	an arp poisoning attack. The way we have implemented this scan is
 	by counting the number of consecutive ARP requests made by a specific host. 
@@ -616,10 +616,10 @@ def behavioral_detection(file=None, **kwargs):
 ### 4. IDS Responder 
 
 Responder's spoofing is one of the last attacks we are trying to protect against.
-Responder uses LLMNR, NBT-NS, and MDNS poisioning attacks. Essestially, we can use these kind of spoofing attacks agaisnt a network when a victim sends a bad DNS requests to a server. Once this bad request has been sent, we act as a 'Man-in-the-Middle' and our Kali machine acts as the machine that the victim wants to connect to. Once this connection has been made, we get the SMB.txt file from the client and we can therefore crack this hash offline to get valuable information about the victim machine.   
+Responder uses LLMNR, NBT-NS, and MDNS poisoning attacks. Essentially, we can use these kind of spoofing attacks against a network when a victim sends a bad DNS requests to a server. Once this bad request has been sent, we act as a 'Man-in-the-Middle' and our Kali machine acts as the machine that the victim wants to connect to. Once this connection has been made, we get the SMB.txt file from the client and we can therefore crack this hash offline to get valuable information about the victim machine.   
 In our code we assume that one machine in the network has been setup to be the domain controller.
 Therefore if traffic is seen from an IP that is not the domain controller on specific protocols, NBNS and LLMNR, that only the domain controller should be sending on we assume responder is trying to spoof the network. 
-The hardcoded *DOMAIN_IP* will need to be changed per network as it will not always be the same.
+The hard coded *DOMAIN_IP* will need to be changed per network as it will not always be the same.
 
 ```python
 DOMAIN_IP = '192.168.150.201'  
@@ -634,7 +634,7 @@ def behavioral_detection(file=None, **kwargs):
         try:
             if ('nbns' in packet or 'llmnr' in packet) and packet.ip.src != DOMAIN_IP:
                 print(
-                    f'Responder ATTACK deteced in packet number: {packet.number}')
+                    f'Responder ATTACK detected in packet number: {packet.number}')
                 detected = True
         except AttributeError:
             pass
@@ -648,7 +648,7 @@ The last attack that we are determined to detect is the Metasploits ms17_010_pse
 `ms17_010_psexec_signature_detection` takes in the same parameters as previously seen, and passes them to `sniffer.get_capture`.
 `ms17_010_psexec_signature_detection` then begins to watch traffic over the network via the capture object.
 It does this by looking through every packet on the network and seeing if there are any SMB files in the packet.
-If there are SMB files, it then attempts to look at the path and sees if it is attempting to acces the ICP$ or ADMIN$ shares.
+If there are SMB files, it then attempts to look at the path and sees if it is attempting to access the ICP$ or ADMIN$ shares.
 Normal SMB traffic does not attempt to set the path to the ICP$ or ADMIN$ shares.
 Therefore, if it they are in the path to be used, we flag the packet.
 
@@ -694,10 +694,10 @@ Before running any of the detections you must ensure the framework is setup prop
         * `brew cask install wireshark`
     * Windows
         * `choco install wireshark`
-* Install Python dependancies
+* Install Python dependencies
     * Make sure you are in the root directory for this project
     * `pip3 install -r requirements.txt`
-* Ensure the hardcoded IP in `src/ids_responder.py` is correct for your network.
+* Ensure the hard coded IP in `src/ids_responder.py` is correct for your network.
 
 ### 1. Running the IDS
 
@@ -747,7 +747,7 @@ These checks are done on both NBNS protocols and LLMNR protocols as shown below.
 
 ### 7. ms17_010_psexec
 
-![ms17_010_psexec Dectection](img/ms17_psexec/Catching_exploit.png)
+![ms17_010_psexec Detection](img/ms17_psexec/Catching_exploit.png)
 
 ![ms17_010_psexec Successful](img/ms17_psexec/Catching_wireshark.png)
 
@@ -1073,7 +1073,7 @@ def behavioral_detection(file=None, **kwargs):
 An IDS system for detecting responder attacks
 
 Author: John David Watts
-Date: Decemeber 12 2019
+Date: December 12 2019
 """
 
 import sniffer
@@ -1098,7 +1098,7 @@ def behavioral_detection(file=None, **kwargs):
         try:
             if ('nbns' in packet or 'llmnr' in packet) and packet.ip.src != DOMAIN_IP:
                 print(
-                    f'Responder ATTACK deteced in packet number: {packet.number}')
+                    f'Responder ATTACK detected in packet number: {packet.number}')
                 detected = True
         except AttributeError:
             # some LLMNR packets are transmitted via link layer and not the internet layer
