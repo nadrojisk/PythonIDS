@@ -378,7 +378,7 @@ As you can see from the image below, it is very easy to use this attack:
 
 ![Initializing ms17_010_psexec](img/ms17_psexec/Running_ms17_010_psexec.png)
 
-## II. Code Walkthrough
+## III. Code Walkthrough
 
 ### 1. Sniffer 
 
@@ -661,7 +661,7 @@ def ms17_010_psexec_signature_detection(file=None, **kwargs):
 ```
 
 
-## III. Detection
+## IV. Detection
 
 Here we discuss how to setup our IDS system and show it working against live attacks.
 
