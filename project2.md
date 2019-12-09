@@ -185,7 +185,27 @@ A figure of this entire process is shown below to aid your understanding of what
 ![Basic attack where a user mistypes the server name](img/responder/basic_attack.png)
 
 
-### 6. CVE^[22]^
+### 6. Metasploit's ms17_010_psexec^[22]^
+
+Metasploit's ms17_010_psexec exploit is a combination exploit consisting of the ms17_010 exploit and the psexec exploit.
+ms17_010_psexec first uses the ms17_010 exploit to gain access to system, then the psexec exploit to drop a payload.
+
+The ms17_010 exploit uses the SMB vulnerabilities described in CVE-2017-0143, CVE-2017-0146, and CVE-2017-0147. It uses these vulnerabilities to gain the ability to write-what-where in an attempt to overwrite the current session as an Administrator session.
+It does this by exploiting the type confusion between Transaction requests and WriteAndX requests.
+Once the Administrator session has been completed the psexec exploit is then initialized.
+
+If Powershell is detected on the host system, the executable will attempt to run a Powershell command with the payload embedded.
+
+If Powershell is not detected on the system, the psexec exploit will attempt to place the payload on the system under the SYSTEM32 directory, then execute the payload.
+It is allowed to do this due to the Administrator session that was previously obtained.
+The psexec exploit packages code and a payload as an executable and using the Administrator session previously obtained, accesses the Admin$ share.
+After accessing the Admin$ share, psexec then connects to the Distributed Computing Environment / Remote Procedure Calls (DCE/RPC) and remotely calls into the Service Control Manager(SCM) to run the executable.
+
+There is a third way to attempt a connection.
+It is the Management Object File(MOF) method.
+This method will only work on Windows XP and Windows Server 2003 so we did not use it in our demonstrations below.
+The MOF method works by adding the payload under the SYSTEM32 directory and placing a MOF file under the SYSTEM32\wbem\mof\ directory.
+Upon discovery of the MOF, windows will run the file which will execute the payload.
 
 ## II. Attack Walkthrough
 
