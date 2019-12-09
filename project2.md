@@ -176,9 +176,11 @@ From this position, the attacker can perform several different attacks including
 We will now walk you through the process of ARP poisoning with Ettercap.
 The first thing Ettercap does is it scans the network for active hosts. 
 Below you can notice several ARP requests in a row all coming from the same host- this is the host discovery step. 
+
 ![Host Discovery](img/ettercap/HostDiscoveryPackets.PNG)
 
 From the list of active hosts the attacker selects a victim- this is the machine they will pretend to be. The attacker machine sends out gratuitous ARPs claiming that they are the machine associated with an ip address that they are sitting on. 
+
 ![Gratuitous ARPs](img/ettercap/GratuitousArpPackets.PNG)
 
 The ip address they are claiming to be actually belongs to the victim machine. This message, the gratuitous ARP, is broadcasted on the network, so all the machines listening and learning the network hear it and assume it's true.
