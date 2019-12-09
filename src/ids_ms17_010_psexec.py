@@ -10,11 +10,12 @@ Date: Dec 7 2019
 def ms17_010_psexec_signature_detection(file=None, **kwargs):
 
 	"""
-	ms17_010_psexec detection function
+    ms17_010_psexec detection function
 
-	Uses the detection of a null session(IPC$) and privilege
-	escalation(ADMIN$) within SMB packets.
-	"""
+    Uses the detection of monitoring if a packet
+    contains SMB files and is looking to access 
+    the path to the ICP$ or ADMIN$ shares.
+    """
 
     capture = sniffer.get_capture(file, **kwargs)
     for packet in capture:
