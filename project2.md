@@ -696,7 +696,11 @@ It will prompt you for the interface you want to listen on.
 
 ### 5. Responder
 
-### 6. CVE
+### 6. ms17_010_psexec
+
+![ms17_010_psexec Dectection](img/ms17_psexec/Catching_exploit.png)
+
+![ms17_010_psexec Successful](img/ms17_psexec/Catching_wireshark.png)
 
 # Recommendations
 
@@ -1054,9 +1058,36 @@ def behavioral_detection(file=None, **kwargs):
 
 ```
 
-## VI. CVE-2017-010 IDS Code
+## VI. ms17_010_psexec IDS Code
 
+```python
+import sniffer
 
+"""
+An IDS system for detecting ms17_010_psexec
+
+Author: Matthew McGlawn
+Date: Dec 7 2019
+"""
+
+def ms17_010_psexec_signature_detection(file=None, **kwargs):
+
+    """
+    ms17_010_psexec detection function
+
+    Uses the detection of monitoring if a packet contains SMB files and is looking to access the path to the ICP$ or ADMIN$ shares.
+    """
+
+    capture = sniffer.get_capture(file, **kwargs)
+    for packet in capture:
+        if('SMB' in packet):
+            smb = packet.smb
+            if("path" in dir(smb)):
+                path = smb.path
+                if(("IPC$" in path) or ("ADMIN$" in path)):
+                    print("MS_010_psexec detected in packet:" + str(packet.number))
+
+```
 
 # References
 
