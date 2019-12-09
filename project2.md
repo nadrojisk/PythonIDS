@@ -168,7 +168,6 @@ The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags.
 
 The first thing Ettercap does is it scans the network for active hosts. 
 Below you can notice several ARP requests in a row all coming from the same host- this is the host discovery step. 
-
 ![Host Discovery](img/ettercap/HostDiscoveryPackets.PNG)
 
 Following that, the attacker selects a victim. Following this selection, the attacker machine sent out gratuitous arp claiming that they are the machine associated with an ip address that they are sitting on. 
@@ -199,7 +198,7 @@ While this authentication is taking place, the client will send the spoofed mach
 If we can capture this hash, it can be cracked offline of the network with a few of the tools that we have learned this semester such as: Hashcat or John the Ripper. 
 A figure of this entire process is shown below to aid your understanding of what kind of attack we are going to perform with the responder tool. 
 
-![Basic attack where a user mistypes the server name](./img/responder/basic_attack.png)
+![Basic attack where a user mistypes the server name](img/responder/basic_attack.png)
 
 
 ### 6. Metasploit's ms17_010_psexec^[22]^
@@ -221,7 +220,7 @@ After accessing the Admin$ share, psexec then connects to the Distributed Comput
 There is a third way to attempt a connection.
 It is the Managed Object File(MOF) method.
 This method will only work on Windows XP and Windows Server 2003 so we did not use it in our demonstrations below.
-The MOF method works by adding the payload under the SYSTEM32 directory and placing a MOF file under the SYSTEM32\wbem\mof\ directory.
+The MOF method works by adding the payload under the SYSTEM32 directory and placing a MOF file under the SYSTEM32\\wbem\\mof\\ directory.
 Upon discovery of the MOF, windows will run the file which will execute the payload.
 
 ## II. Attack Walkthrough
@@ -420,7 +419,7 @@ def _sniff(interface=None, timeout=10, continuous=True, out_file=None):
     return capture
 ```
 
-`_chose_interface` is a utility function that aids a user if they do not know their network adapter' names.
+`choose_interface` is a utility function that aids a user if they do not know their network adapter' names.
 It uses a python module called *netifaces* to list all the network interfaces on a machine.
 On Windows it is a little bit more complicated.
 Windows machines will respond with GUIDs that relate to registry keys instead of adapter names like `eth0` or `en0`.
@@ -1259,14 +1258,3 @@ def ms17_010_psexec_signature_detection(file=None, **kwargs):
 [37]: http://www.intelliadmin.com/index.php/2007/10/the-admin-share-explained/
 [38]: https://docs.netapp.com/ontap-9/index.jsp?topic=%2Fcom.netapp.doc.cdot-famg-cifs%2FGUID-5B56B12D-219C-4E23-B3F8-1CB1C4F619CE.html
 
-
-For this process we are going to use the lab machines to show that an attack against the Windows 7 machine (.200) from the Kali Machine (.10). 
-As stated previously we are going to use the responder tool in Kali Linux to perform an ‘Man-in-the-Middle’ attack by intercepting the traffic flow from a bad DNS server call from the Windows 7 machine. 
-Once we send an LLMNR or a NETBIOS broadcast from the Kali Machine, the Windows 7 machine will accept this broadcast. 
-Once this broadcast has been accepted, our attacker will grab a file named ‘SMBv2-NTLMv2-SSP-192.168.150.201.txt’ in which we can decrypt in order to see the username and passwords. 
-
-Now that we know what exactly will happen on the network, we can easily see how our IDS needs to be implemented in order to help prevent this attack. 
-To prevent this attack, all we need to check for is if the source IP address is not the source IP addresses of the DNS server or the Windows 7 machine which we will already know as we are familiar with what network we are on. 
-If this source IP address is not the Windows 7 machine (192.168.x.201) or the DNS server we are trying to connect to, then we need to check what source is sending packets. 
-For this instance, our behavioral IDS checks to see that the source equals 192.168.x.201, if it does not match, then we send a message to the user saying that there is an issue. 
-These checks are done on both NBNS protocols and LLMNR protocols as shown below.
