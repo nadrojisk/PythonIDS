@@ -157,22 +157,32 @@ This scan is rather fast and stealthy due to the fact that if never completes a 
 NMAP will send a *SYN* packet and an *open* port will respond with a **SYN/ACK** while a *closed* port will send a **RST**. 
 If no response is returned it is assumed the port is *filtered*. 
 
-
 ### 3. NMAP XMAS Scan ^[2]^
 
 This scan exploits a behavior built into RFC 793^[21]^  to differentiate between open and closed ports.
 "If the [destination] port state is *CLOSED* ... an incoming segment not containing a *RST* causes a *RST* to be sent in response" and. Therefore no response will mean that the port is either *open* or *filtered*. 
 The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags. 
 
-#### 4. Ettercap ^[3]^
+### 4. Ettercap ^[3]^
 
+Ettercap was originally intended to be used for packet sniffing on LAN networks but has evolved into a tool used primarily for man-in-the-middle attacks. One of the most common man-in-the-middle attacks, and one provided by Ettercap, is ARP poisoning.
+ARP poisoning is an attack that takes advantage of the communication method of the Address Resolutuon Protocol (ARP). ARP is used for mapping an internal LAN network. Each host has what is known as an 'ARP Table' where they keep track of internal ip addresses and the MAC address of that particular ip address.
+The reason for this protocol is to help route packets or frames to an individual host. When trying to route messages internally, computers will ask who has an ip address. This request is broadcasted accross the ENTIRE network. If a computer has the associated ip address, they will reply to that message. 
+The key points to keep in mind in this communication is that these messages are broadcasted and are NOT verified. ARP poisoning takes advantage of these points by first discovering all of the hosts, and mapping the network, finding ACTIVE hosts.
+Once the attacker has selected a victim machine, they send replies to ARP requests for the victim machine's ip address- these are known as 'Gratuitous ARP' messages. No machine has requested these, but because ARP can not verify if the host sending these messages is who they say they are the attacker can get away with the attack.
+Through sending these messages, the attacker is 'poisoning' the ARP tables of the network and more importantly the gateway or router of the network. When messages intended for the victim machine arrive in the network, they are routed to the attacker instead of the victim! 
+From this position, the attacker can perform several different attacks including but not limited to sniffing all of the traffic intended for the victim, hijacking any session the victim had, or modifying their traffic. 
+
+We will now walk you through the process of ARP poisoning with Ettercap.
 The first thing Ettercap does is it scans the network for active hosts. 
 Below you can notice several ARP requests in a row all coming from the same host- this is the host discovery step. 
 ![Host Discovery](img/ettercap/HostDiscoveryPackets.PNG)
 
-Following that, the attacker selects a victim. Following this selection, the attacker machine sent out gratuitous arp claiming that they are the machine associated with an ip address that they are sitting on. 
-This ip address they are claiming to be actually belongs to the victim machine. This message, the gratuitous ARP, is broadcasted on the network, so all the machines listening and learning the network hear it and assume it's true.
-They log this information in their ARP tables, and now when traffic is routed to that IP, it is routed to the attacker machine instead of the victim host.
+From the list of active hosts the attacker selects a victim- this is the machine they will pretend to be. The attacker machine sends out gratuitous ARPs claiming that they are the machine associated with an ip address that they are sitting on. 
+![Gratuitous ARPs](img/ettercap/GratuitousArpPackets.PNG)
+
+The ip address they are claiming to be actually belongs to the victim machine. This message, the gratuitous ARP, is broadcasted on the network, so all the machines listening and learning the network hear it and assume it's true.
+All of the machines on the network log this information in their ARP tables, and now when traffic is routed to that ip address, it is routed to the attacker machine instead of the victim host.
 
 ### 5. Responder
 
@@ -199,7 +209,6 @@ If we can capture this hash, it can be cracked offline of the network with a few
 A figure of this entire process is shown below to aid your understanding of what kind of attack we are going to perform with the responder tool. 
 
 ![Basic attack where a user mistypes the server name](img/responder/basic_attack.png)
-
 
 ### 6. Metasploit's ms17_010_psexec^[22]^
 
@@ -539,11 +548,12 @@ def heuristic_detection(file=None, **kwargs):
     was_detected = False
     host_in_question = ""
     concurrent_arp_req_count = 0
-    arp_req_threshold = 30
+    request = '1'
+    reply = '2'
 
     for packet in capture:
-        if 'arp' in packet:
-            if packet.arp.opcode == '1':  # if the arp packet is an arp request
+        if 'arp' in packet: #if it is an ARP packet
+            if packet.arp.opcode == request:  # if the arp packet is an arp request
                 if host_in_question == "":
                     host_in_question = packet.eth.src  # set first MAC SRC address for ARP messages
                 elif host_in_question == packet.eth.src:  # if the current mac equals the previous mac
@@ -552,7 +562,7 @@ def heuristic_detection(file=None, **kwargs):
                     host_in_question = packet.eth.src
                     concurrent_arp_req_count = 0
                 # if the number of concurrent arp_requests with the same src exceeds our threshold there's a problem
-                if concurrent_arp_req_count >= arp_req_threshold:
+                if concurrent_arp_req_count >= ARP_REQ_THRESHOLD:
                     print("ARP POISONING DETECTED!!! FLAGGED PACKET:", packet.number)
                     was_detected = True
     return was_detected
@@ -570,7 +580,6 @@ def behavioral_detection(file=None, **kwargs):
     was_detected = False
     previous_arp_type = None
     current_arp_type = None
-    concurrent_arp_reply_threshold = 4
     concurrent_arp_reply_count = 0
     request = '1'
     reply = '2'
@@ -578,20 +587,18 @@ def behavioral_detection(file=None, **kwargs):
     for packet in capture:
         if 'arp' in packet:
             current_arp_type = packet.arp.opcode
-            # check if the previous message was a request
-            if current_arp_type == reply:  # if it's a reply
-                if previous_arp_type == request:
+            if current_arp_type == reply:  # if current ARP message is a reply
+                if previous_arp_type == request: # if the previous ARP message was a request
                     # clear the previous message and move on
                     previous_arp_type = current_arp_type
                     concurrent_arp_reply_count = 0
-                else:
+                else: # if the previous ARP was a reply
                     concurrent_arp_reply_count += 1
-                    # if it was NOT, there's a problem
-                    if concurrent_arp_reply_count > concurrent_arp_reply_threshold:
+                    if concurrent_arp_reply_count > CONCURRENT_ARP_REPLY_THRESHOLD: # when the number of concurrent replies reaches Threshold
                         print(
                             "GRATUITOUS ARP DETECTED!!! FLAGGED PACKET:", packet.number)
                         was_detected = True
-            else:  # if it is a request
+            else:  # if current ARP message it is a request
                 previous_arp_type = request
     return was_detected
 
@@ -979,22 +986,8 @@ Date: Nov 12, 2019
 
 import sniffer
 
-# ARP POISONING CHECKS
-# 1. check the number of arp requests in a row over the network
-# if it exceeds 10 in a row, we know they're running network discovery
-# otherwise, it should be ok
-# 2. check if the arp reply contains information about duplicate-addresses
-# if it does, they're most likely running arp poisoning
-# if it isn't, it should be ok
-# 3. assuming they get passed the arp request count check, keep count of the number arp req to
-# arp replys
-
-# if the replies far exceeds the replies, we know that an arp spoof is taking place
-# otherwise, we should be ok
-
-# depricated function 2 as it's a built-in warning associated with wireshark (i think),
-# and will not work with tshark
-
+CONCURRENT_ARP_REPLY_THRESHOLD = 4
+ARP_REQ_THRESHOLD = 30
 
 def heuristic_detection(file=None, **kwargs):
     """
@@ -1010,11 +1003,12 @@ def heuristic_detection(file=None, **kwargs):
     was_detected = False
     host_in_question = ""
     concurrent_arp_req_count = 0
-    arp_req_threshold = 30
+    request = '1'
+    reply = '2'
 
     for packet in capture:
-        if 'arp' in packet:
-            if packet.arp.opcode == '1':  # if the arp packet is an arp request
+        if 'arp' in packet: #if it is an ARP packet
+            if packet.arp.opcode == request:  # if the arp packet is an arp request
                 if host_in_question == "":
                     host_in_question = packet.eth.src  # set first MAC SRC address for ARP messages
                 elif host_in_question == packet.eth.src:  # if the current mac equals the previous mac
@@ -1023,7 +1017,7 @@ def heuristic_detection(file=None, **kwargs):
                     host_in_question = packet.eth.src
                     concurrent_arp_req_count = 0
                 # if the number of concurrent arp_requests with the same src exceeds our threshold there's a problem
-                if concurrent_arp_req_count >= arp_req_threshold:
+                if concurrent_arp_req_count >= ARP_REQ_THRESHOLD:
                     print("ARP POISONING DETECTED!!! FLAGGED PACKET:", packet.number)
                     was_detected = True
     return was_detected
@@ -1040,7 +1034,6 @@ def behavioral_detection(file=None, **kwargs):
     was_detected = False
     previous_arp_type = None
     current_arp_type = None
-    concurrent_arp_reply_threshold = 4
     concurrent_arp_reply_count = 0
     request = '1'
     reply = '2'
@@ -1048,20 +1041,18 @@ def behavioral_detection(file=None, **kwargs):
     for packet in capture:
         if 'arp' in packet:
             current_arp_type = packet.arp.opcode
-            # check if the previous message was a request
-            if current_arp_type == reply:  # if it's a reply
-                if previous_arp_type == request:
+            if current_arp_type == reply:  # if current ARP message is a reply
+                if previous_arp_type == request: # if the previous ARP message was a request
                     # clear the previous message and move on
                     previous_arp_type = current_arp_type
                     concurrent_arp_reply_count = 0
-                else:
+                else: # if the previous ARP was a reply
                     concurrent_arp_reply_count += 1
-                    # if it was NOT, there's a problem
-                    if concurrent_arp_reply_count > concurrent_arp_reply_threshold:
+                    if concurrent_arp_reply_count > CONCURRENT_ARP_REPLY_THRESHOLD: # when the number of concurrent replies reaches Threshold
                         print(
                             "GRATUITOUS ARP DETECTED!!! FLAGGED PACKET:", packet.number)
                         was_detected = True
-            else:  # if it is a request
+            else:  # if current ARP message it is a request
                 previous_arp_type = request
     return was_detected
 
@@ -1257,4 +1248,3 @@ def ms17_010_psexec_signature_detection(file=None, **kwargs):
 [36]: https://en.wikipedia.org/wiki/Administrative_share
 [37]: http://www.intelliadmin.com/index.php/2007/10/the-admin-share-explained/
 [38]: https://docs.netapp.com/ontap-9/index.jsp?topic=%2Fcom.netapp.doc.cdot-famg-cifs%2FGUID-5B56B12D-219C-4E23-B3F8-1CB1C4F619CE.html
-
