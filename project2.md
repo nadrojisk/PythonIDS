@@ -116,6 +116,22 @@ This framework gives user the ability to choose from one of the many pre-configu
 The MS-010 security update corrects the multiple SMB vulnerabilities discovered in Microsoft Windows that could allow for remote access to a system.
 Each exact vulnerability is detailed in CVE-2017-0143, CVE-2017-0144, CVE-2017-0145, CVE-2017-0146, CVE-2017-0147, and CVE-2017-0148.
 
+### 13. Admin$
+
+Admin$ is a hidden share that is on all NT versions of windows. It allows administrators to remotely access every disk on a connected system.
+
+### 14. Distributed Computing Environment / Remote Procedure Calls(DCE/RPC)
+
+A remote procedure that allows the writing of software as if working on the computer.
+
+### 15. Service Control Manager(SCM)
+
+A system process under Windows NT systems that starts and stops Windows processes.
+
+### 16. Managed Object File(MOF)
+
+Simplified, managed object files contain data that corresponds to events to do.
+
 # Methods
 
 ## I. Attack Explanations
@@ -194,7 +210,7 @@ The psexec exploit packages code and a payload as an executable and using the Ad
 After accessing the Admin$ share, psexec then connects to the Distributed Computing Environment / Remote Procedure Calls (DCE/RPC) and remotely calls into the Service Control Manager(SCM) to run the executable.
 
 There is a third way to attempt a connection.
-It is the Management Object File(MOF) method.
+It is the Managed Object File(MOF) method.
 This method will only work on Windows XP and Windows Server 2003 so we did not use it in our demonstrations below.
 The MOF method works by adding the payload under the SYSTEM32 directory and placing a MOF file under the SYSTEM32\wbem\mof\ directory.
 Upon discovery of the MOF, windows will run the file which will execute the payload.
