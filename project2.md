@@ -615,7 +615,33 @@ def behavioral_detection(file=None, **kwargs):
         except AttributeError:
             pass
     return detected
-`` `
+```
+
+
+### 5. IDS ms17_010_psexec
+
+The last attack that we are determined to detect is the Metasploits ms17_010_psexec attack.
+`ms17_010_psexec_signature_detection` takes in the same parameters as previously seen, and passes them to `sniffer.get_capture`.
+`ms17_010_psexec_signature_detection` then begins to watch traffic over the network via the capture object.
+It does this by looking through every packet on the network and seeing if there are any SMB files in the packet.
+If there are SMB files, it then attempts to look at the path and sees if it is attempting to acces the ICP$ or ADMIN$ shares.
+Normal SMB traffic does not attempt to set the path to the ICP$ or ADMIN$ shares.
+Therefore, if it they are in the path to be used, we flag the packet.
+
+```python
+def ms17_010_psexec_signature_detection(file=None, **kwargs):
+
+    capture = sniffer.get_capture(file, **kwargs)
+    for packet in capture:
+        if('SMB' in packet):
+            smb = packet.smb
+            if("path" in dir(smb)):
+                path = smb.path
+                if(("IPC$" in path) or ("ADMIN$" in path)):
+                    print("MS_010_psexec detected in packet:" + str(packet.number))
+
+```
+
 
 ## III. Detection
 
