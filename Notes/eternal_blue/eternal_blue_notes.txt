@@ -23,3 +23,10 @@ The following commands will run the exploit:
 In the background, we will be recording the network traffic on another machine, 
 .5, as well as the attacker machine
 nothing could be seen on the .5 machine
+
+Relevant Websites for information:
+
+  -https://richardkok.wordpress.com/2011/02/03/wireshark-determining-a-smb-and-ntlm-version-in-a-windows-environment/
+      ->Gives a detailed report of the NTLM 3 way handshake.
+      
+  
