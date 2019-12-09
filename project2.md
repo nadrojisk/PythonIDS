@@ -715,7 +715,6 @@ It will prompt you for the interface you want to listen on.
 
 ### 3. NMAP SYN Scan
 
-
 ![SYN Detection](img/nmap/syn_detection.png)
 
 ### 4. NMAP XMAS Scan
@@ -724,9 +723,20 @@ It will prompt you for the interface you want to listen on.
 
 ### 5. Ettercap
 
+To demonstrate our IDS's ability to detect Ettercap ARP Poisoning, we ran our IDS while performing an ARP Poisoning on a test network. The steps we went through to perform said attack are listed in the 'Attack Walkthrough' section. 
+
+The first step to a succesful ARP Poisoning is host discovery.
+
 ![Host Discovery Detection](img/ettercap/HostDiscoveryDetection.PNG)
+This figure illustrates our IDS detecting ARP Poisoning when performing host discovery with Ettercap. On the left, Ettercap is performing the host discovery task, and on the right we have our IDS system running the heuristic scan. One can note several messages 
+warning the user of ARP POISONING and altering them to the packet that flagged the warning.
+
+Next, we started sniffing traffic, and pushing gratuitous ARPs onto the network- performing ARP Poisoning.
 
 ![Gratuitous ARP Detection](img/ettercap/GratuitousArp.PNG)
+This figure illustrated our IDS detecting Gratuitous ARPs while on a live network. On the left one can note the 'Target' tab of Ettercap. the host '192.168.35.20' is the target of the ARP poisoning. To the right of that, you'll notice our IDS running the behavioral ARP scan. 
+The IDS is succesfully detecting the gratuitous ARPs, which are sent less frequently than the requests seen during host discovery.
+The IDS alerts the user of the gratuitous ARP and returns the packet number that created the warning.
 
 ### 6. Responder
 
