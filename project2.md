@@ -150,6 +150,8 @@ If a system is *unfiltered*, not running a firewall, *open* and *closed* ports w
 However, if a system is *filtered*, running a firewall, ports will not respond at all.
 This type of scan *will not* detect if ports are open or closed.
 
+![ACK Packets](img/nmap/ack_packets.png)
+
 ### 2. NMAP SYN Scan ^[2]^
 
 This scan is the default scan for NMAP scanning. 
@@ -157,11 +159,15 @@ This scan is rather fast and stealthy due to the fact that if never completes a 
 NMAP will send a *SYN* packet and an *open* port will respond with a **SYN/ACK** while a *closed* port will send a **RST**. 
 If no response is returned it is assumed the port is *filtered*. 
 
+![SYN Packets](img/nmap/syn_packets.png)
+
 ### 3. NMAP XMAS Scan ^[2]^
 
 This scan exploits a behavior built into RFC 793^[21]^  to differentiate between open and closed ports.
 "If the [destination] port state is *CLOSED* ... an incoming segment not containing a *RST* causes a *RST* to be sent in response" and. Therefore no response will mean that the port is either *open* or *filtered*. 
 The XMAS Scan sets the **FIN**, **PSH**, and **URG** flags. 
+
+![XMAS Packets](img/nmap/xmas_packets.png)
 
 ### 4. Ettercap ^[3]^
 
