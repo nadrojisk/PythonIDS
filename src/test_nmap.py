@@ -32,7 +32,8 @@ def test_xmas_sig_tn_100():
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not ids_nmap.xmas_signature_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.xmas_signature_detection(
+        'pcaps/nmap/normal_data2.pcapng')
 
 
 def test_ack_sig_tp_100():
@@ -50,7 +51,8 @@ def test_ack_sig_tn_100():
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not ids_nmap.ack_heuristic_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.ack_heuristic_detection(
+        'pcaps/nmap/normal_data2.pcapng')
 
 
 def test_syn_sig_tp_100():
@@ -68,4 +70,5 @@ def test_syn_sig_tn_100():
     # benign traffic
 
     # recorded on a mac visiting various websites
-    assert not ids_nmap.syn_heuristic_detection('pcaps/normal_data2.pcapng')
+    assert not ids_nmap.syn_heuristic_detection(
+        'pcaps/nmap/normal_data2.pcapng')
