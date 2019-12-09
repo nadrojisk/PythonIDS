@@ -1101,6 +1101,22 @@ def ms17_010_psexec_signature_detection(file=None, **kwargs):
 [8]: https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/
 [9]: https://linux.die.net/man/8/ettercap
 [10]: https://linux.die.net/man/1/nmap
+[11]: https://www.csoonline.com/article/3379117/what-is-metasploit-and-how-to-use-this-popular-hacking-tool.html
+[12]: https://www.varonis.com/blog/what-is-metasploit/
+[13]: https://metasploit.help.rapid7.com/docs
+[14]: https://github.com/iagox86/metasploit-framework-webexec/blob/master/documentation/modules/exploit/windows/smb/ms17_010_psexec.md
+[15]: https://www.rapid7.com/db/modules/exploit/windows/smb/ms17_010_psexec
+[16]: https://www.cyber.nj.gov/alerts-and-advisories/20180209/eternalchampion-eternalromance-and-eternalsynergy-modified-to-exploit-all-windows-versions-since-windows-2000
+[17]: https://www.fireeye.com/blog/threat-research/2017/05/smb-exploited-wannacry-use-of-eternalblue.html
+[18]: https://blog.rapid7.com/2013/03/09/psexec-demystified/
+[19]: https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010
+[20]: https://docs.microsoft.com/en-us/windows/win32/wmisdk/managed-object-format--mof-
+[21]: https://en.wikipedia.org/wiki/Service_Control_Manager
+[22]: https://en.wikipedia.org/wiki/DCE/RPC
+[23]: https://richardkok.wordpress.com/2011/02/03/wireshark-determining-a-smb-and-ntlm-version-in-a-windows-environment/
+[24]: https://en.wikipedia.org/wiki/Administrative_share
+[25]: http://www.intelliadmin.com/index.php/2007/10/the-admin-share-explained/
+[26]: https://docs.netapp.com/ontap-9/index.jsp?topic=%2Fcom.netapp.doc.cdot-famg-cifs%2FGUID-5B56B12D-219C-4E23-B3F8-1CB1C4F619CE.html
 
 
 For this process we are going to use the lab machines to show that an attack against the Windows 7 machine (.200) from the Kali Machine (.10). 
