@@ -638,7 +638,7 @@ Normal SMB traffic does not attempt to set the path to the ICP$ or ADMIN$ shares
 Therefore, if it they are in the path to be used, we flag the packet.
 
 ```python
-def ms17_010_psexec_signature_detection(file=None, **kwargs):
+def signature_detection(file=None, **kwargs):
 
     capture = sniffer.get_capture(file, **kwargs)
     for packet in capture:
@@ -1121,7 +1121,7 @@ Author: Matthew McGlawn
 Date: Dec 7 2019
 """
 
-def ms17_010_psexec_signature_detection(file=None, **kwargs):
+def signature_detection(file=None, **kwargs):
 
     """
     ms17_010_psexec detection function
