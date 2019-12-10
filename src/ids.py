@@ -1,7 +1,9 @@
 """
 Main IDS Driver
 
-Author: Jordan Sosnowski, Charles Harper, John David Watts
+Authors: Jordan Sosnowski, Charles Harper, 
+John David Watts, and Tyler McGlawn
+
 Date: Dec 6, 2019
 """
 import sys
