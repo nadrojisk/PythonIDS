@@ -11,6 +11,7 @@ import sniffer
 import ids_nmap
 import ids_ettercap
 import ids_responder
+import ids_ms17_010_psexec
 
 
 def clear():
@@ -50,6 +51,8 @@ def main():
         target=ids_ettercap.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
     responder = multiprocessing.Process(
         target=ids_responder.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
+    ms17_010_psexec = multiprocessing.Process(
+        target=ids_ms17_010_psexec.signature_detection, kwargs={'interface': interface, 'continuous': True})
 
     # starting individual threads
     xmas.start()
@@ -58,6 +61,7 @@ def main():
     ettercap_1.start()
     ettercap_2.start()
     responder.start()
+    ms17_010_psexec.start()
 
     # wait until threads complete
     xmas.join()
@@ -66,6 +70,7 @@ def main():
     ettercap_1.join()
     ettercap_2.join()
     responder.join()
+    ms17_010_psexec.join()
     print("Done!")
 
 
