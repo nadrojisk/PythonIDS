@@ -7,7 +7,7 @@ Author: Matthew McGlawn
 Date: Dec 7 2019
 """
 
-def ms17_010_psexec_signature_detection(file=None, **kwargs):
+def signature_detection(file=None, **kwargs):
 
 	"""
     ms17_010_psexec detection function
@@ -28,4 +28,4 @@ def ms17_010_psexec_signature_detection(file=None, **kwargs):
 
 				
 if __name__ == "__main__":
-	ms17_010_psexec_signature_detection()
+	signature_detection()
