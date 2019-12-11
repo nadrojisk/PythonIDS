@@ -13,7 +13,7 @@ titlepage-background: "./background8.pdf"
 # Executive summary
 
 For this project we were tasked with producing a Python based intrusion detection system (IDS).
-Our IDS is specifically a host based IDS, by that we mean the scanner is ran on each host on the network.
+Our IDS is specifically a host based IDS <!-- incorrect network based ids need to update-->, by that we mean the scanner is ran on each host on the network.
 Since the network we are running on is using a wired switch the IDS can only see traffic to or from the host it is running on.
 
 The IDS implementation protects against NMAP's SYN Scans, ACK Scans, and XMAS Scans, Ettercap's ARP Poisoning, Responder's LLMNR and NetBIOS-NS Poisoning, Metasploit's ms17_010_psexec exploit.
@@ -822,6 +822,8 @@ If a configuration file is not passed the program could promopt the user to choo
 A third option would be to allow a flag to be set either in the command line or the configuration file to just run all detectors.
 
 Building off of the configurations file concept it may be beneficial for some hardcoded values such as the domain controller IP or number of unique ports to be passed in the configuration file as well. An example is listed below
+
+Ctrl-C breaks
 
 ```json
 {
