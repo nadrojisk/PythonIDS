@@ -45,13 +45,13 @@ To fully understand some of the processes and applications discussed in this pap
 
 ### 1. Intrusion Detection System
 
-An intrusion detection system^[14]^ is software or device that analyzes network traffic for malicious activity.
+An intrusion detection system^[1]^ is software or device that analyzes network traffic for malicious activity.
 Malicious activity is usually flagged, with the administrator of the network being notified of the incident.
 IDS systems can also be configured to stop detected intrusions.
 
 ### 2. Network Based Intrusion Detection System
 
-A network based IDS^[46]^ is an intrusion detection system that is focused on network communications between hosts on a network.
+A network based IDS^[2]^ is an intrusion detection system that is focused on network communications between hosts on a network.
 The opposite of a host based IDS is a **host based IDS** where the IDS is focused on logs produced by processes running on a host.
 The downside for a network based IDS is while running on a switched network an IDS will only be able to see traffic destined to or from the host it is running on.
 This is due to the fact that on switched networks the switch will only forward packets to the intended ports.
@@ -60,27 +60,27 @@ Also if traffic is encrypted the IDS will not be able to decipher it properly.
 
 ### 3. Behavior Based Detection
 
-Behavior based detection^[15]^ analyzes traffic using a **known baseline**.
+Behavior based detection^[3]^ analyzes traffic using a **known baseline**.
 If the traffic is not close to this baseline the traffic will be flagged.
 An example would be if a network is known to only have FTP traffic but for some reason there is now packets using SSH and SFTP traffic it should be flagged.
 Of course in this example a user could have spun up a box that uses SSH or SFTP but since the baseline is used to seeing only FTP it is abnormal traffic.
 
 ### 4. Anomaly Based Detection
 
-Anomaly based detection^[13]^ attempts to find abnormal **protocol** activity.
+Anomaly based detection^[4]^ attempts to find abnormal **protocol** activity.
 Protocols adhere to strict guidelines, most are defined in RFCs.
 If for instance, there is traffic on a network that shows a protocol not adhering to its normal activity it should be flagged.
 This is different from a behavior IDS because it is focused on **protocol** activity while behavior is focused on looking at what is **normal** for a network.
 
 ### 5. Signature Based Detection
 
-Signature based detection^[12]^ searches network traffic for **specific patterns**.
+Signature based detection^[5]^ searches network traffic for **specific patterns**.
 Malicious traffic usually has telltale signs, and if these **signs** are seen in packets they should be flagged as malicious.
 If for instance it is known that a recent strain of a popular malware communicate with a server *www.bad_malware.com* on port *8080* then any packets destined to this address and port should be flagged.
 
 ### 6. Heuristic Based Detection
 
-Heuristic based detection^[11]^ uses algorithms or **simple rules** to determine compromise.
+Heuristic based detection^[6]^ uses algorithms or **simple rules** to determine compromise.
 Can combine signature, anomaly, and behavior tactics.
 For example it would be odd for a single IP to scan multiple different ports with a payload of zero data.
 A simple rule could check and see if a unique IP has more than 20 unique destination ports plus using the signature of length zero data packets.
@@ -88,17 +88,17 @@ If this rule is triggered one can assume it is malicious.
 
 ### 7. NMAP
 
-NMAP^[10]^ is a free and open-source network scanner and mapper tool used **both** by information security experts and malicious users.
+NMAP^[7]^ is a free and open-source network scanner and mapper tool used **both** by information security experts and malicious users.
 NMAP provides a huge number of features for scanning and probing networks.
 
 ### 8. Ettercap
 
-Ettercap^[9]^ is a 'multipurpose sniffer/content filter' for **man in the middle attacks**.
+Ettercap^[8]^ is a 'multipurpose sniffer/content filter' for **man in the middle attacks**.
 It was originally created as a sniffer for switched LANs, but evolved into a tool meant for man-in-the middle-attacks.
 
 ### 9. ARP Poisoning
 
-ARP poisoning^[47]^ is an attack that takes advantage of the communication method of the Address Resolution Protocol (ARP).
+ARP poisoning^[9]^ is an attack that takes advantage of the communication method of the Address Resolution Protocol (ARP).
 ARP is used for mapping an internal LAN network.
 Each host has what is known as an 'ARP Table' where they keep track of internal ip addresses and the MAC address of that particular ip address.
 
@@ -119,49 +119,49 @@ From this position, the attacker can perform several different attacks including
 
 ### 10. Responder
 
-Responder^[18]^ is a tool that allows us to use **LLMNR**, **NBT-NS**, and **MDNS poisoning**.
+Responder^[10]^ is a tool that allows us to use **LLMNR**, **NBT-NS**, and **MDNS poisoning**.
 What this means is that we can use an LLMNR and NBT-NS Spoofing attack against a network.
 This sort of attack takes advantage of default Windows configurations in order to achieve its end goal.
 
-### 11. Link-Local Multicast Name Resolution (LLMNR)^[16]^
+### 11. Link-Local Multicast Name Resolution (LLMNR)
 
-LLMNR^[16]^ is protocol based on the Domain Name System packet format that allows hosts to perform **name resolution** for hosts on the same local link.
+LLMNR^[11]^ is protocol based on the Domain Name System packet format that allows hosts to perform **name resolution** for hosts on the same local link.
 
 ### 12. NetBIOS-NS (NBT-NS)
 
-NBT-NS^[17]^ is a name service provided by **NetBIOS** that provides **name registration** and resolution.
+NBT-NS^[12]^ is a name service provided by **NetBIOS** that provides **name registration** and resolution.
 Identifies the systems on a local network by their NetBIOS name.
 
 ### 13. NetBIOS
 
-NetBIOS^[19]^ provides services related to the session layer of the OSI model allowing applications on separate computers to communicate over a local area network.
+NetBIOS^[13]^ provides services related to the session layer of the OSI model allowing applications on separate computers to communicate over a local area network.
 
 ### 14. Metasploit
 
-Metasploit^[20]^ is a Ruby-based open source **penetration testing framework**, that allows for a systematic vulnerability probe into a network.
+Metasploit^[14]^ is a Ruby-based open source **penetration testing framework**, that allows for a systematic vulnerability probe into a network.
 It is operated via a command line interface or graphical user interface, that allows the user to choose the target, exploit, and payload to use against the target system.
 This framework gives user the ability to choose from one of the many pre-configured exploits/payloads, or use a custom exploit/payload.
 
 ### 15. MS17-010 / CVE-2017-014X
 
-The MS-010 security update^[39]^ corrects the multiple **SMB vulnerabilities** discovered in Microsoft Windows that could allow for remote access to a system.
-Each exact vulnerability is detailed in CVE-2017-0143^[40]^, CVE-2017-0144^[41]^, CVE-2017-0145^[42]^, CVE-2017-0146^[43]^, CVE-2017-0147^[44]^, and CVE-2017-0148^[45]^.
+The MS-010 security update^[15]^ corrects the multiple **SMB vulnerabilities** discovered in Microsoft Windows that could allow for remote access to a system.
+Each exact vulnerability is detailed in CVE-2017-0143^[16]^, CVE-2017-0144^[17]^, CVE-2017-0145^[18]^, CVE-2017-0146^[19]^, CVE-2017-0147^[20]^, and CVE-2017-0148^[21]^.
 
 ### 16. Admin$
 
-Admin$^[36]^ is a hidden share that is on all NT versions of windows. It allows administrators to **remotely access** every disk on a connected system.
+Admin$^[22]^ is a hidden share that is on all NT versions of windows. It allows administrators to **remotely access** every disk on a connected system.
 
 ### 17. Distributed Computing Environment / Remote Procedure Calls(DCE/RPC)
 
-DCE/RPC^[34]^ is a remote procedure that allows the writing of software as if working on the computer.
+DCE/RPC^[23]^ is a remote procedure that allows the writing of software as if working on the computer.
 
 ### 18. Service Control Manager(SCM)
 
-SCM^[33]^ is a system process under Windows NT systems that starts and stops Windows processes.
+SCM^[24]^ is a system process under Windows NT systems that starts and stops Windows processes.
 
 ### 19. Managed Object File(MOF)
 
-Simplified, managed object files^[32]^ contain data that corresponds to events to do.
+Simplified, managed object files^[25]^ contain data that corresponds to events to do.
 
 # Methods
 
@@ -172,7 +172,7 @@ Understanding why and how attacks work is critical for detecting them.
 
 ### 1. NMAP ACK Scan
 
-This scan^[2]^ is different than the other two scans discussed in this report.
+This scan^[26]^ is different than the other two scans discussed in this report.
 Its main purpose is to map out if a firewall is active and filtering certain ports or not.
 If a system is **unfiltered**, not running a firewall, **open** and **closed** ports will return a *RST* packet.
 However, if a system is **filtered**, running a firewall, ports will not respond at all.
@@ -182,14 +182,14 @@ The NMAP attacks by themselves are not too dangerous, especially compared to the
 However knowing which ports are open / closed / filtered is the starting point for almost every attack.
 Due to the knowledge gained by these scans one can craft tailored attacks.
 It is more complicated to disable scanning compared to the other attacks.
-But, as seen later, it is rather trivial to detect scans. 
+But, as seen later, it is rather trivial to detect scans.
 Once detected the IP that is performing the scan can just be booted off the network.
 
 ![ACK Packets](img/nmap/ack_packets.png)
 
 ### 2. NMAP SYN Scan
 
-This scan^[2]^ is the default scan for NMAP scanning.
+This scan^[26]^ is the default scan for NMAP scanning.
 The SYN scan is rather fast and stealthy due to the fact that if never completes a full TCP handshake.
 NMAP will send a *SYN* packet and an **open** port will respond with a *SYN/ACK* while a **closed** port will send a *RST*.
 If no response is returned it is assumed the port is **filtered**.
@@ -198,7 +198,7 @@ If no response is returned it is assumed the port is **filtered**.
 
 ### 3. NMAP XMAS Scan
 
-This scan^[2]^ exploits a behavior built into RFC 793^[21]^  to differentiate between open and closed ports.
+This scan^[26]^ exploits a behavior built into RFC 793^[27]^  to differentiate between open and closed ports.
 "If the [destination] port state is **CLOSED** ... an incoming segment not containing a *RST* causes a *RST* to be sent in response" and. Therefore no response will mean that the port is either **open** or **filtered**.
 The XMAS Scan sets the *FIN*, *PSH**, and *URG* flags.
 
@@ -206,7 +206,7 @@ The XMAS Scan sets the *FIN*, *PSH**, and *URG* flags.
 
 ### 4. Ettercap's ARP Poisoning
 
-Ettercap^[3]^ was originally intended to be used for packet sniffing on LAN networks but has evolved into a tool used primarily for man-in-the-middle attacks.
+Ettercap^[28]^ was originally intended to be used for packet sniffing on LAN networks but has evolved into a tool used primarily for man-in-the-middle attacks.
 One of the most common man-in-the-middle attacks, and one provided by Ettercap, is ARP poisoning.
 
 We will now walk you through the process of ARP poisoning with Ettercap.
@@ -230,7 +230,7 @@ These entries are configured by the system administrators and it requires a larg
 
 ### 5. Responder
 
-Out of all the other attacks Responder is by far the most complicated and the one of the ones with the most background knowledge.
+Out of all the other attacks Responder^[29]^ is by far the most complicated and the one of the ones with the most background knowledge.
 The other being the metasploit exploit.
 Responder uses an LLMNR and NBT-NS spoofing to poison a network.
 It is important to understand what a LLMNR and NBT-NS server broadcasts in order to understand how this kind of attack works.
@@ -265,7 +265,7 @@ To disable NetBIOS-NS you will have to go into your IP settings.
 
 ### 6. Metasploit's ms17_010_psexec
 
-Metasploit's ms17_010_psexec^[22]^ exploit is a combination of exploits consisting of the ms17_010 exploit and the psexec exploit.
+Metasploit's ms17_010_psexec^[30]^ exploit is a combination of exploits consisting of the ms17_010 exploit and the psexec exploit.
 ms17_010_psexec first uses the ms17_010 exploit to gain access to system, then the psexec exploit to drop a payload.
 
 The ms17_010 exploit uses the SMB vulnerabilities described in CVE-2017-0143, CVE-2017-0146, and CVE-2017-0147.
@@ -435,7 +435,7 @@ As you can see from the image below, it is very easy to use this attack:
 Our first module that was built was the sniffer module.
 `sniffer` is used in all of the IDS detection modules.
 This module uses *Pyshark*, a python wrapper for shark which is the terminal version of *Wireshark*, to sniff traffic.
-`get_capture` takes in either a file and an arbitrary amount of named parameters which are all grabbed by  **kwargs^[1]^.
+`get_capture` takes in either a file and an arbitrary amount of named parameters which are all grabbed by  **kwargs^[31]^.
 If a file is passed `_read_cap` is called else `_sniff` is called.
 
 ```python
@@ -917,8 +917,6 @@ A third option would be to allow a flag to be set either in the command line or 
 
 Building off of the configurations file concept it may be beneficial for some hard coded values such as the domain controller IP or number of unique ports to be passed in the configuration file as well. An example is listed below
 
-Ctrl-C breaks
-
 ```json
 {
     "detectors": [
@@ -957,9 +955,19 @@ Additionally when we detect that there is a malicious event we only print the ev
 It would be better if we logged all events to a log file and have an option to run the IDS in verbose mode and have it print any malicious events to standard out as well.
 Adding the time the event occurred as well as the IP which sent it would be helpful as well, since right now it is just the packet number.
 
+Additionally, currently our program does not stop gracefully.
+The only way to exit the detector is to hit Ctrl-C to kill the process.
+However, this throws a bunch of errors.
+The program ends, but it could be improved so that it quits cleaner.
+Also once running the program it immediately throws you into detection mode, it may be beneficial to add in a menu so users can choose to run a detector, read in the config files, look over logs, etc.
+
+Since we are running on a switched network we can only see data destined for the host running the IDS.
+It may be beneficial to link multiple hosts together to share logs that are recovered via their IDS.
+This network of IDS detectors could allow more complex logic to tie attacks together and pin down intruders.
+
 # Conclusion
 
-Intrusion Detection Systems provide a valuable and vital service to security professionals, corporations, and consumers.
+Intrusion detection systems provide a valuable and vital service to security professionals, corporations, and consumers.
 Successful implementation of such a system into your network can help detect attacks and help prevent would-be
 attackers from entering a network, in turn protecting sensitive or expensive data and resources.
 
@@ -1445,144 +1453,129 @@ def signature_detection(file=None, **kwargs):
 
 # References
 
-1: <https://stackoverflow.com/questions/1769403/what-is-the-purpose-and-use-of-kwargs>
+1: <https://en.wikipedia.org/wiki/Intrusion_detection_system>
 
-2: <https://nmap.org/book/man-port-scanning-techniques.html>
+2: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Network_intrusion_detection_systems>
 
-3: <https://pentestmag.com/ettercap-tutorial-for-windows/>
+3: <https://whatis.techtarget.com/definition/behavior-based-security>
 
-4: <https://www.notsosecure.com/pwning-with-responder-a-pentesters-guide/>
+4: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Anomaly-based>
 
-5: <https://tools.kali.org/sniffingspoofing/responder>
+5: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Signature-based>
 
-6: <https://forums.kali.org/showthread.php?36036-Penetration-Testing-How-to-use-Responder-py-to-Steal-Credentials>
+6: <https://en.wikipedia.org/wiki/Heuristic_analysis>
 
-7: <https://www.4armed.com/blog/llmnr-nbtns-poisoning-using-responder/>
+7: <https://linux.die.net/man/1/nmap>
 
-8: <https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/>
+8: <https://linux.die.net/man/8/ettercap>
 
-9: <https://linux.die.net/man/8/ettercap>
+9: <https://en.wikipedia.org/wiki/ARP_spoofing>
 
-10: <https://linux.die.net/man/1/nmap>
+10: <https://github.com/lgandx/Responder>
 
-11: <https://en.wikipedia.org/wiki/Heuristic_analysis>
+11: <https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution>
 
-12: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Signature-based>
+12: <https://en.wikipedia.org/wiki/NetBIOS#Name_service>
 
-13: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Anomaly-based>
+13: <https://en.wikipedia.org/wiki/NetBIOS>
 
-14: <https://en.wikipedia.org/wiki/Intrusion_detection_system>
+14: <https://en.wikipedia.org/wiki/Metasploit_Project>
 
-15: <https://whatis.techtarget.com/definition/behavior-based-security>
+15: <https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010>
 
-16: <https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution>
+16: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0143>
 
-17: <https://en.wikipedia.org/wiki/NetBIOS#Name_service>
+17: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144>
 
-18: <https://github.com/lgandx/Responder>
+18: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0145>
 
-19: <https://en.wikipedia.org/wiki/NetBIOS>
+19: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0146>
 
-20: <https://en.wikipedia.org/wiki/Metasploit_Project>
+20: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0147>
 
-21: <https://tools.ietf.org/html/rfc793>
+21: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0148>
 
-22: <https://null-byte.wonderhowto.com/how-to/exploit-eternalblue-windows-server-with-metasploit-0195413/>
+22: <https://en.wikipedia.org/wiki/Administrative_share>
 
-23: <https://www.csoonline.com/article/3379117/what-is-metasploit-and-how-to-use-this-popular-hacking-tool.html>
+23: <https://en.wikipedia.org/wiki/DCE/RPC>
 
-24: <https://www.varonis.com/blog/what-is-metasploit/>
+24: <https://en.wikipedia.org/wiki/Service_Control_Manager>
 
-25: <https://metasploit.help.rapid7.com/docs>
+25: <https://docs.microsoft.com/en-us/windows/win32/wmisdk/managed-object-format--mof->
 
 26: <https://github.com/iagox86/metasploit-framework-webexec/blob/master/documentation/modules/exploit/windows/smb/ms17_010_psexec.md>
 
 27: <https://www.rapid7.com/db/modules/exploit/windows/smb/ms17_010_psexec>
 
-28: <https://www.cyber.nj.gov/alerts-and-advisories/20180209/eternalchampion-eternalromance-and-eternalsynergy-modified-to-exploit-all-windows-versions-since-windows-2000>
+28: <https://pentestmag.com/ettercap-tutorial-for-windows/>
 
-29: <https://www.fireeye.com/blog/threat-research/2017/05/smb-exploited-wannacry-use-of-eternalblue.html>
+29: <https://tools.kali.org/sniffingspoofing/responder>
 
 30: <https://blog.rapid7.com/2013/03/09/psexec-demystified/>
 
-31: <https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010>
+31: <https://stackoverflow.com/questions/1769403/what-is-the-purpose-and-use-of-kwargs>
 
-32: <https://docs.microsoft.com/en-us/windows/win32/wmisdk/managed-object-format--mof->
+32: <https://metasploit.help.rapid7.com/docs>
 
-33: <https://en.wikipedia.org/wiki/Service_Control_Manager>
+33: <https://www.varonis.com/blog/what-is-metasploit/>
 
-34: <https://en.wikipedia.org/wiki/DCE/RPC>
+34: <https://www.csoonline.com/article/3379117/what-is-metasploit-and-how-to-use-this-popular-hacking-tool.html>
 
 35: <https://richardkok.wordpress.com/2011/02/03/wireshark-determining-a-smb-and-ntlm-version-in-a-windows-environment/>
 
-36: <https://en.wikipedia.org/wiki/Administrative_share>
+36: <https://null-byte.wonderhowto.com/how-to/exploit-eternalblue-windows-server-with-metasploit-0195413/>
 
 37: <http://www.intelliadmin.com/index.php/2007/10/the-admin-share-explained/>
 
 38: <https://docs.netapp.com/ontap-9/index.jsp?topic=%2Fcom.netapp.doc.cdot-famg-cifs%2FGUID-5B56B12D-219C-4E23-B3F8-1CB1C4F619CE.html>
 
-39: <https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010>
+39: <https://www.cyber.nj.gov/alerts-and-advisories/20180209/eternalchampion-eternalromance-and-eternalsynergy-modified-to-exploit-all-windows-versions-since-windows-2000>
 
-40: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0143>
+40: <https://forums.kali.org/showthread.php?36036-Penetration-Testing-How-to-use-Responder-py-to-Steal-Credentials>
 
-41: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144>
+41: <https://www.fireeye.com/blog/threat-research/2017/05/smb-exploited-wannacry-use-of-eternalblue.html>
 
-42: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0145>
+42: <https://www.4armed.com/blog/llmnr-nbtns-poisoning-using-responder/>
 
-43: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0146>
+43: <https://www.notsosecure.com/pwning-with-responder-a-pentesters-guide/>
 
-44: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0147>
+44: <https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010>
 
-45: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0148>
+45: <https://tools.ietf.org/html/rfc793>
 
-46: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Network_intrusion_detection_systems>
+46: <https://nmap.org/book/man-port-scanning-techniques.html>
 
-47: <https://en.wikipedia.org/wiki/ARP_spoofing>
+47: <https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/>
 
-[1]: <https://stackoverflow.com/questions/1769403/what-is-the-purpose-and-use-of-kwargs>
-[2]: <https://nmap.org/book/man-port-scanning-techniques.html>
-[3]: <https://pentestmag.com/ettercap-tutorial-for-windows/>
-[4]: <https://www.notsosecure.com/pwning-with-responder-a-pentesters-guide/>
-[5]: <https://tools.kali.org/sniffingspoofing/responder>
-[6]: <https://forums.kali.org/showthread.php?36036-Penetration-Testing-How-to-use-Responder-py-to-Steal-Credentials>
-[7]: <https://www.4armed.com/blog/llmnr-nbtns-poisoning-using-responder/>
-[8]: <https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/>
-[9]: <https://linux.die.net/man/8/ettercap>
-[10]: <https://linux.die.net/man/1/nmap>
-[11]: <https://en.wikipedia.org/wiki/Heuristic_analysis>
-[12]: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Signature-based>
-[13]: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Anomaly-based>
-[14]: <https://en.wikipedia.org/wiki/Intrusion_detection_system>
-[15]: <https://whatis.techtarget.com/definition/behavior-based-security>
-[16]: <https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution>
-[17]: <https://en.wikipedia.org/wiki/NetBIOS#Name_service>
-[18]: <https://github.com/lgandx/Responder>
-[19]: <https://en.wikipedia.org/wiki/NetBIOS>
-[20]: <https://en.wikipedia.org/wiki/Metasploit_Project>
-[21]: <https://tools.ietf.org/html/rfc793>
-[22]: <https://null-byte.wonderhowto.com/how-to/exploit-eternalblue-windows-server-with-metasploit-0195413/>
-[23]: <https://www.csoonline.com/article/3379117/what-is-metasploit-and-how-to-use-this-popular-hacking-tool.html>
-[24]: <https://www.varonis.com/blog/what-is-metasploit/>
-[25]: <https://metasploit.help.rapid7.com/docs>
+
+[1]: <https://en.wikipedia.org/wiki/Intrusion_detection_system>
+[2]: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Network_intrusion_detection_systems>
+[3]: <https://whatis.techtarget.com/definition/behavior-based-security>
+[4]: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Anomaly-based>
+[5]: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Signature-based>
+[6]: <https://en.wikipedia.org/wiki/Heuristic_analysis>
+[7]: <https://linux.die.net/man/1/nmap>
+[8]: <https://linux.die.net/man/8/ettercap>
+[9]: <https://en.wikipedia.org/wiki/ARP_spoofing>
+[10]: <https://github.com/lgandx/Responder>
+[11]: <https://en.wikipedia.org/wiki/Link-Local_Multicast_Name_Resolution>
+[12]: <https://en.wikipedia.org/wiki/NetBIOS#Name_service>
+[13]: <https://en.wikipedia.org/wiki/NetBIOS>
+[14]: <https://en.wikipedia.org/wiki/Metasploit_Project>
+[15]: <https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010>
+[16]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0143>
+[17]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144>
+[18]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0145>
+[19]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0146>
+[20]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0147>
+[21]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0148>
+[22]: <https://en.wikipedia.org/wiki/Administrative_share>
+[23]: <https://en.wikipedia.org/wiki/DCE/RPC>
+[24]: <https://en.wikipedia.org/wiki/Service_Control_Manager>
+[25]: <https://docs.microsoft.com/en-us/windows/win32/wmisdk/managed-object-format--mof->
 [26]: <https://github.com/iagox86/metasploit-framework-webexec/blob/master/documentation/modules/exploit/windows/smb/ms17_010_psexec.md>
 [27]: <https://www.rapid7.com/db/modules/exploit/windows/smb/ms17_010_psexec>
-[28]: <https://www.cyber.nj.gov/alerts-and-advisories/20180209/eternalchampion-eternalromance-and-eternalsynergy-modified-to-exploit-all-windows-versions-since-windows-2000>
-[29]: <https://www.fireeye.com/blog/threat-research/2017/05/smb-exploited-wannacry-use-of-eternalblue.html>
+[28]: <https://pentestmag.com/ettercap-tutorial-for-windows/>
+[29]: <https://tools.kali.org/sniffingspoofing/responder>
 [30]: <https://blog.rapid7.com/2013/03/09/psexec-demystified/>
-[31]: <https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010>
-[32]: <https://docs.microsoft.com/en-us/windows/win32/wmisdk/managed-object-format--mof->
-[33]: <https://en.wikipedia.org/wiki/Service_Control_Manager>
-[34]: <https://en.wikipedia.org/wiki/DCE/RPC>
-[35]: <https://richardkok.wordpress.com/2011/02/03/wireshark-determining-a-smb-and-ntlm-version-in-a-windows-environment/>
-[36]: <https://en.wikipedia.org/wiki/Administrative_share>
-[37]: <http://www.intelliadmin.com/index.php/2007/10/the-admin-share-explained/>
-[38]: <https://docs.netapp.com/ontap-9/index.jsp?topic=%2Fcom.netapp.doc.cdot-famg-cifs%2FGUID-5B56B12D-219C-4E23-B3F8-1CB1C4F619CE.html>
-[39]: <https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010>
-[40]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0143>
-[41]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144>
-[42]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0145>
-[43]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0146>
-[44]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0147>
-[45]: <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0148>
-[46]: <https://en.wikipedia.org/wiki/Intrusion_detection_system#Network_intrusion_detection_systems>
-[47]: <https://en.wikipedia.org/wiki/ARP_spoofing>
+[31]: <https://stackoverflow.com/questions/1769403/what-is-the-purpose-and-use-of-kwargs>
