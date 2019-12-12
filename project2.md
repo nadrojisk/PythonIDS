@@ -18,7 +18,8 @@ Our IDS is specifically a network based IDS, by that we mean the scanner is focu
 Since the network we are running on is using a wired switch the IDS can only see traffic to or from the host it is running on.
 
 The IDS implementation protects against NMAP's SYN Scans, ACK Scans, and XMAS Scans, Ettercap's ARP Poisoning, Responder's LLMNR and NetBIOS-NS Poisoning, Metasploit's ms17_010_psexec exploit.
-We also use various types of detection systems to protect against attacks there are 4 covered: behavioral, anomaly, signature, and heuristic.
+We also use various types of detection systems to protect against attacks.
+There are 4 covered: behavioral, anomaly, signature, and heuristic.
 
 # Introduction
 
@@ -101,9 +102,11 @@ ARP poisoning^[47]^ is an attack that takes advantage of the communication metho
 ARP is used for mapping an internal LAN network.
 Each host has what is known as an 'ARP Table' where they keep track of internal ip addresses and the MAC address of that particular ip address.
 
-The reason for the ARP protocol is to help route packets or frames to an individual host.
-When trying to route messages internally, computers will ask who has a specific IP address.
-This request is broadcasted across the **entire** network. If a computer has the associated IP address, they will reply to that message with their MAC address.
+ARPs purpose is to map MAC addresses to IP address which helps route packets or frames to an individual host.
+To map an IP address to a MAC address computers will need perform ARP requests.
+This request is broadcasted across the **entire** network.
+If a computer has the associated IP address, they will reply to that message with their MAC address.
+
 The key points to keep in mind in this communication is that these messages are **broadcasted** and are **not** verified.
 ARP poisoning takes advantage of this by first discovering all of the hosts, mapping the network, and determining which hosts are **active**.
 Once the attacker has selected a victim machine, they send replies to ARP requests for the victim machine's IP address - these are known as 'Gratuitous ARP' messages.
@@ -178,6 +181,9 @@ This type of scan **will not** detect if ports are open or closed.
 The NMAP attacks by themselves are not too dangerous, especially compared to the other attacks.
 However knowing which ports are open / closed / filtered is the starting point for almost every attack.
 Due to the knowledge gained by these scans one can craft tailored attacks.
+It is more complicated to disable scanning compared to the other attacks.
+But, as seen later, it is rather trivial to detect scans. 
+Once detected the IP that is performing the scan can just be booted off the network.
 
 ![ACK Packets](img/nmap/ack_packets.png)
 
@@ -219,6 +225,8 @@ All of the machines on the network log this information in their ARP tables, and
 This attack inherently is not extremely dangerous but it will damage the integrity and confidentiality of a network.
 Now all traffic destined to a machine will be going through the attackers box allowing them to see all the information destined to the victim.
 However, if the traffic is encrypted the attacker will not be able to see any of it.
+A way to stop ARP poisoning is to use Static ARP entries.
+These entries are configured by the system administrators and it requires a large amount of overhead.
 
 ### 5. Responder
 
@@ -246,6 +254,14 @@ If a user needs to login to **theshare** but types in **tehshare** this attack w
 This attack can also succeed if the networks DNS server is down for some reason.
 One the spoofing starts a user most likely will not realize there is an issue and will type in their login credentials.
 If this were to happen to a system admin the attacker would have the admins credentials, they are hashed but with enough time and if the password's strength is poor the attacker can now have admin access to this network.
+Responder's attacks can be mitigated with a simple option within Windows.
+Disabling LLMNR is as easy as going into Group Policy and enabling a configuration.
+
+![LLMNR Disabling](/img/ettercap/prevention_1.png)
+
+To disable NetBIOS-NS you will have to go into your IP settings.
+
+![NetBIOS-NS Disabling](img/ettercap/prevention_2.png)
 
 ### 6. Metasploit's ms17_010_psexec
 
@@ -269,7 +285,9 @@ This method will only work on Windows XP and Windows Server 2003 so we did not u
 The MOF method works by adding the payload under the SYSTEM32 directory and placing a MOF file under the SYSTEM32\\wbem\\mof\\ directory.
 Upon discovery of the MOF, windows will run the file which will execute the payload.
 
-Out of all the attacks discussed so far this is by far the most dangerous as one can gain direct access to a system using this exploit.
+Out of all the attacks discussed so far this is by far the most dangerous as one can gain direct access to a system using this exploit. However, it is the easiest to prevent, especially now.
+Updating Windows by installing the MS17-010 update will patch infected systems.
+Under Windows going to *Windows Update* and clicking *check for updates* should install the patch if your system is not updated.
 
 ## II. Attack Walkthrough
 
@@ -691,6 +709,55 @@ def signature_detection(file=None, **kwargs):
 
 ```
 
+### 6. IDS
+
+The main IDS driver uses multiprocessing to run each detector.
+Once the detector is running it will print to standard output if an incident is detected.
+One can pase via the command line the interface they want to use, if one is not passed they will be prompted to choose one.
+
+```python
+if len(sys.argv) > 1:
+    interface = sys.argv[1]
+else:
+    interface = sniffer.choose_interface()
+clear()
+print('Sniffing...')
+
+xmas = multiprocessing.Process(
+    target=ids_nmap.xmas_signature_detection, kwargs={'interface': interface, 'continuous': True})
+ack = multiprocessing.Process(
+    target=ids_nmap.ack_heuristic_detection, kwargs={'interface': interface, 'continuous': True})
+syn = multiprocessing.Process(
+    target=ids_nmap.syn_heuristic_detection, kwargs={'interface': interface, 'continuous': True})
+ettercap_1 = multiprocessing.Process(
+    target=ids_ettercap.heuristic_detection, kwargs={'interface': interface, 'continuous': True})
+ettercap_2 = multiprocessing.Process(
+    target=ids_ettercap.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
+responder = multiprocessing.Process(
+    target=ids_responder.behavioral_detection, kwargs={'interface': interface, 'continuous': True})
+ms17_010_psexec = multiprocessing.Process(
+    target=ids_ms17_010_psexec.signature_detection, kwargs={'interface': interface, 'continuous': True})
+
+# starting individual threads
+xmas.start()
+ack.start()
+syn.start()
+ettercap_1.start()
+ettercap_2.start()
+responder.start()
+ms17_010_psexec.start()
+
+# wait until threads complete
+xmas.join()
+ack.join()
+syn.join()
+ettercap_1.join()
+ettercap_2.join()
+responder.join()
+ms17_010_psexec.join()
+print("Done!")
+```
+
 ## IV. Detection
 
 Here we discuss how to setup our IDS system and show it working against live attacks.
@@ -903,6 +970,8 @@ Each of these opportunities is invaluable when considering entering the informat
 
 You will find below the raw source code of the framework.
 
+\newpage
+
 ## I. Sniffer Code
 
 ```python
@@ -1030,6 +1099,8 @@ def get_capture(file=None, **kwargs):
 
 ```
 
+\newpage
+
 ## II. IDS Code
 
 ```python
@@ -1113,6 +1184,8 @@ def main():
 
 main()
 ```
+
+\newpage 
 
 ## III. NMAP IDS Code
 
@@ -1205,6 +1278,8 @@ def syn_heuristic_detection(file=None, **kwargs):
     return detected
 ```
 
+\newpage
+
 ## IV. Ettercap IDS Code
 
 ```python
@@ -1289,6 +1364,8 @@ def behavioral_detection(file=None, **kwargs):
 
 ```
 
+\newpage
+
 ## V. Responder IDS Code
 
 ```python
@@ -1331,6 +1408,8 @@ def behavioral_detection(file=None, **kwargs):
 
 ```
 
+\newpage
+
 ## VI. ms17_010_psexec IDS Code
 
 ```python
@@ -1361,6 +1440,8 @@ def signature_detection(file=None, **kwargs):
                     print("MS_010_psexec detected in packet:" + str(packet.number))
 
 ```
+
+\newpage
 
 # References
 
