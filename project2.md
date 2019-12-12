@@ -257,7 +257,7 @@ If this were to happen to a system admin the attacker would have the admins cred
 Responder's attacks can be mitigated with a simple option within Windows.
 Disabling LLMNR is as easy as going into Group Policy and enabling a configuration.
 
-![LLMNR Disabling](/img/ettercap/prevention_1.png)
+![LLMNR Disabling](img/ettercap/prevention_1.png)
 
 To disable NetBIOS-NS you will have to go into your IP settings.
 
