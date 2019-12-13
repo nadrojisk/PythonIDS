@@ -151,7 +151,7 @@ Each vulnerability is detailed in CVE-2017-0143^[16]^, CVE-2017-0144^[17]^, CVE-
 
 Admin$^[22]^ is a hidden share that is on all NT versions of Windows. It allows administrators to **remotely access** every disk on a connected system.
 
-### 17. Distributed Computing Environment / Remote Procedure Calls(DCE/RPC)
+### 17. Distributed Computing Environment/Remote Procedure Calls (DCE/RPC)
 
 DCE/RPC^[23]^ is a remote procedure that allows for the writing of software as if working on the computer.
 
