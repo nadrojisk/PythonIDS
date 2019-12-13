@@ -161,7 +161,7 @@ SCM^[24]^ is a system process under Windows NT systems that starts and stops Win
 
 ### 19. Managed Object File(MOF)
 
-Simplified, managed object files^[25]^ contain data that corresponds to events to do.
+Managed object files^[32]^ contain data that gets translated into a list of actions / events for a system to complete.
 
 # Methods
 
