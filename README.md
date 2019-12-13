@@ -1,4 +1,4 @@
-# EH_Proj2
+# PythonIDS 
 
 Ethical Hacking Class Project: Python IDS 
 
