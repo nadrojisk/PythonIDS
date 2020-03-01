@@ -1,0 +1,53 @@
+DNS spoofing Notes:
+
+
+A good resource and tutorial that explains the attack:
+https://null-byte.wonderhowto.com/how-to/tutorial-dns-spoofing-0167796/
+
+The steps to set up this attack were very similar
+
+1. Open Ettercap
+2. Start sniffing with the 'unified' option
+3. stop sniffing
+ *reason to start and stop - these two steps are to select the
+ interface we want to listen on and perform our attacks from
+4. Host Discovery
+5. select targets
+	we select the victim IP address as target 1, and the gateway 
+	as target2
+		to get the gateway IP address of the network, enter `route -n`
+		and then find the ip associated with the gateway
+			in our case, that was .2
+6. Manage the plugins
+	-we select 'Plugins' from the ribbon
+	-Select DNS Spoof plugin by double clicking it
+
+7.  perform your standard ARP spoofing
+7. Start sniffing traffic
+
+Additional requirements:
+	we need to edit 2 files to have this work properly
+	
+	We'll start with out ettercap.conf file located in /etc/ettercap/ettercap.cong
+		We changes the values for the variables lines shown in the figure below
+		to zero
+		
+	Next, we change the ettercap.dns file for rerouting traffic
+		the file can be found in /etc/ettercap/ettercap.dns
+	Scroll down to the line reading 'microsoft sucks ;)
+	below that are the domains and associated ip addresses.
+	
+	add whatever you want to have redirected, in our case we used 'auburn.edu'
+	
+	
+	
+Notes:
+	The issue I have run in now has less to do with capturing the invalid
+	captures or seeing the bad traffic- but more to do with the actual
+	rerouting. 
+	On the victim machine, I find that going to any website I have added to
+	the dns table will freeze on the client side. Additionally, Any website Notes
+	in the DNS table will return an SSL cert issue client-side, provided that the 
+	website was certified- in my case, that was google
+	
+	The ARP poisoning seems to completely ruin all browsing. 

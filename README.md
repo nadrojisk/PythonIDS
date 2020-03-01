@@ -1,6 +1,6 @@
 # PythonIDS 
 
-Ethical Hacking Class Project: Python IDS 
+Class Project: Python IDS 
 
 
 ## Setup

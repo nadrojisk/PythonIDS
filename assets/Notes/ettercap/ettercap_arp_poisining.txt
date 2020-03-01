@@ -1,0 +1,75 @@
+For useful information on ettercap vist the following website:
+	https://null-byte.wonderhowto.com/how-to/use-ettercap-intercept-passwords-with-arp-spoofing-0191191/
+
+
+While Setting up ettercap for capturing, I ran Wireshark in the background
+to keep track of what kiond of traffic would be produced.
+
+step 1: Connect to the network
+	For this exercise, we'll be sitting on the .35 subnetwork within the computer lab of Shelby.
+		-The attacking machine will be the ip address 192.168.35.10, a kali instance
+		-The target machine will be the machine 192.168.35.30
+
+	By default, we're already on the network, so this step was simple.
+
+step 2: open ettercap
+	on our attacking machine, we open ettercap by pressing the home button and typing 'ettercap', and selecting
+	the first option.
+	-Alternatively, we could open it with the following command:
+		ettercap -G
+
+step 3: select the interface
+	Next, we want to select the interface that connects our attacking machine to target network
+	
+	to find this we run ifconfig on our attacker machine, and find the
+	interface associated with the network we are sitting on:
+	
+	in our case, we find that the interface is listed as 'eth0'
+
+	we go ahead and select this from the 'unified sniffing' option under the
+	the 'Sniff' tab
+
+Step 4: Idenitfy hosts
+	Now for the exciting part, host discovery. ettercap has a host discovery
+	function where is sents arp requests for the range of ip on the subnet.
+	With those we find 9 different hosts:
+
+	
+
+Step 5: Select Hosts to target with ARP spoofing
+	next, from the host list, we add the target ip address to 'target 1'
+	and then go to the target list under the target tab
+	From there we highlught the target, navigate the the 'MITM' tab, select
+	ARP Poisoning, and then select the first option, 'sniff remote connections'
+
+	and let the program do what it does best.
+
+provided the porgram works, we should now have poisoned the arp table, and performed
+a MITM attack against .30...
+
+I've recorded from the .5 machine - the host connecting to the attacker machine, 
+as well as the attacker machine. I had attempted to record the victim machine, however
+as soon at the arp table was poisoned, the ssh session crashed.
+
+I've also included an additional run of ettercap from my home lab that clearly shows
+the process arp is using for arp poisoning
+
+
+
+On Detecting Poisoning:
+After looking at the two pcap files related to arp poisoning with ettercap two characteristics are immediately 
+obvious. 
+	1. When host discovery occurs there is a fload of arp request boradcasted over the network with one sole
+	sender- the attacker.
+	2. When a machine is targeted, there is a gratuitous arp broadcasted throughout the network:
+	Generally speaking, this is associated with a warning 'duplicated ip address detected for 192.168.61.129' or whatever
+	the target machine's ip address is on the network.
+		arp.duplicate-address-detected
+	this flag will help find if any packets contain that warning...
+
+when targeted, arp replies were sent on the network continuously
+
+	
+
+	
+	
