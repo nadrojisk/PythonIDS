@@ -1,0 +1,9 @@
+Sniffing
+
+When looking at the different modules available on python, I found this github page describing the functionality of pyshark.
+https://kiminewt.github.io/pyshark/
+	this article essentially walks the reader through using pyshark, a python module sitting on top of tshark - the cli version of wireshark. This read
+		should be helpful in getting started with pyshark.
+		
+On Wireshark Filters:
+https://wiki.wireshark.org/DisplayFilters

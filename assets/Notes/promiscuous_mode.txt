@@ -1,0 +1,32 @@
+promiscuous mode
+
+
+When setting up promiscuous mode for a computer, I read the following links:
+https://security.stackexchange.com/questions/36997/what-is-the-difference-between-promiscuous-and-monitor-mode-in-wireless-networks
+	This article covers the difference between promiscuous and monitor mode in reference to wireless network cards.
+		The two modes are very similar in nature, however, monitor mode sniffs ALL of the traffic surrounsing the host- this means that you can sniff
+		all of the wireless traffic regardless of the access point you are connected to or the network your nic is associated with.
+		Promiscuous, on the other hand, sniffs the traffic of the network or access point you are connected to.
+
+https://wiki.wireshark.org/CaptureSetup/WLAN
+	This article is written by the folks at Wireshark and goes into great detail about types of traffic, what kind of information may be in the packets,
+		how promiscuous and minotor mode work, and most importantly how to set up the different modes with different operating systems...
+		
+		I need to read the rest of the article
+		
+https://github.com/KimiNewt/pyshark/issues/152
+	This article seems to imply that phsark will automatically set whatever wireless card/interface your using to promiscuous mode- this could be an importantly
+		piece of information, and solve the problem of setting promiscuous mode.
+		
+Another interesting library (pythonwifi)
+http://pythonwifi.tuxfamily.org/
+	this library could give us access to our wireless cards or nics, lets us changes the modes they're using, the channels they connect to, etc.
+	
+And one for wifi access via python:
+https://wifi.readthedocs.io/en/latest/index.html
+
+Equipment Considerations:
+https://secwiki.org/w/Npcap/WiFi_adapters
+	This page lists several pieces of hardware and their ability to capture wifi
+	
+	

@@ -1,6 +1,6 @@
 # PythonIDS 
 
-Ethical Hacking Class Project: Python IDS 
+Class Project: Python IDS 
 
 
 ## Setup
@@ -16,5 +16,4 @@ Ethical Hacking Class Project: Python IDS
 * Ensure the interface in ids.py is correct
 * Run ids.py
 
-## Pandoc compiliation
-`pandoc project2.md -o project.pdf --from markdown --template eisvogel --listing --toc`
+
